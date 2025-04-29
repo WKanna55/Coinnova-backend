@@ -1,0 +1,54 @@
+# === Configuración para un proyecto .NET 9 Web API ===
+
+# Carpetas de compilación
+bin/
+obj/
+
+# Archivos de publicación
+publish/
+out/
+
+# Configuración local y sensible
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+
+# Archivos de usuario (IDE específicos)
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+
+# JetBrains Rider
+.idea/
+
+# Resultados de pruebas
+TestResults/
+*.coverage
+*.coveragexml
+
+# Dumps y logs
+*.log
+*.dmp
+
+# Paquetes NuGet locales
+*.nupkg
+*.snupkg
+**/packages/*
+
+# Docker override local
+**/docker-compose.override.yml
+
+# Configuraciones de Sistema Operativo
+# Mac
+.DS_Store
+# Windows
+Thumbs.db
+desktop.ini
+
+# Configuraciones de herramientas
+.env
+*.swp
