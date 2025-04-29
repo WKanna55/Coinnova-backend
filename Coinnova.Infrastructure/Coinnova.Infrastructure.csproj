@@ -7,10 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Context\" />
       <Folder Include="Repositories\" />
       <Folder Include="Scaffold\Context\" />
-      <Folder Include="Scaffold\Entitites\" />
+      <Folder Include="Scaffold\Entities\" />
     </ItemGroup>
 
     <ItemGroup>
@@ -22,6 +21,11 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Coinnova.Domain\Coinnova.Domain.csproj" />
     </ItemGroup>
 
 </Project>

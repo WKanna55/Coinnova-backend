@@ -1,41 +1,51 @@
+using DotNetEnv;
+using Microsoft.OpenApi.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+// Add services to the container.
+builder.Services.AddControllers();
 
+// Cargar el archivo .env
+Env.Load();
+
+// Ahora accedemos a las variables de entorno
+var DATABASE_URL = Environment.GetEnvironmentVariable("DATABASE_URL");
+
+// instalacion swagger 
+builder.Services.AddEndpointsApiExplorer();
+// codiguracion de swagger para poder pasar bearer en el header de la peticion
+builder.Services.AddSwaggerGen();
+
+// ------------------------- app construida -------------------------
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    // uso de swagger
+    app.UseSwagger();
+    // extra de configuracion de swagger para poder pasar bearer en el header de la peticion
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Mi API v1");
+        c.RoutePrefix = string.Empty; // Esto hace que Swagger esté en "/"
+        c.DefaultModelsExpandDepth(-1); // Ocultar modelos por defecto si no lo necesitas
+    });
 }
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+// agregar para que funcione
+app.UseRouting();
+app.UseAuthentication(); // agregado para jwt
+app.UseAuthorization();
+app.MapControllers(); // para swagger y APIRESTful
 
-app.MapGet("/weatherforecast", () =>
-    {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast");
 
+// -------------------------------- Correr app --------------------------------
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

@@ -1,0 +1,30 @@
+﻿namespace Coinnova.Domain.Entities;
+
+public partial class Event
+{
+    public int Id { get; set; }
+
+    public DateTime Initialdate { get; set; }
+
+    public DateTime Enddate { get; set; }
+
+    public string? Place { get; set; }
+
+    public string Name { get; set; } = null!;
+
+    public string? Imageurl { get; set; }
+
+    public string? Rulesurl { get; set; }
+
+    public string? Description { get; set; }
+
+    public int? Createdby { get; set; }
+
+    public DateTime? Createdat { get; set; }
+
+    public virtual User? CreatedbyNavigation { get; set; }
+
+    public virtual ICollection<EventCategory> EventCategory { get; set; } = new List<EventCategory>();
+
+    public virtual ICollection<InstitutionEvent> InstitutionEvent { get; set; } = new List<InstitutionEvent>();
+}
