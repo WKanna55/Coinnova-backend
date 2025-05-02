@@ -1,5 +1,6 @@
 using Coinnova.Application.Dtos.Auth;
 using Coinnova.Application.Interfaces;
+using Coinnova.Domain.Entities;
 using Coinnova.Domain.Interfaces.Base;
 using Mapster;
 
@@ -22,6 +23,20 @@ public class AuthService : IAuthService
 
         return user.Adapt<LoginResponseDto>(); // ← ya aplica el mapeo personalizado
     }
+
+    public async Task<RegisterResponseDto> Register(RegisterRequestDto registerDto)
+    {
+        var newUser = registerDto.Adapt<User>();
+
+        newUser.IdRole = 2; // rol estandar
+        
+        
+        await _unitOfWork.Users.Add(newUser);
+        await _unitOfWork.Complete();
+        
+        return newUser.Adapt<RegisterResponseDto>();
+    }
+    
     
     
 }

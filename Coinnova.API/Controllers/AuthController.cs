@@ -15,7 +15,7 @@ public class AuthController : ControllerBase
         _authService = authService;
     }
 
-    [HttpPost]
+    [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequestDto loginDto)
     {
         if (!ModelState.IsValid) 
@@ -27,6 +27,17 @@ public class AuthController : ControllerBase
             return NotFound();
 
         return Ok(user);
+    }
+
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterRequestDto registerDto)
+    {
+        if (!ModelState.IsValid) 
+            return BadRequest(ModelState);
+
+        var userDto = await _authService.Register(registerDto);
+        
+        return Ok(userDto);
     }
 
 
