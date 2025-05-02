@@ -14,6 +14,8 @@ public partial class Post
 
     public int? Likes { get; set; }
 
+    public int IdType { get; set; }
+
     public string? Imageurl { get; set; }
 
     public int IdUser { get; set; }
@@ -23,6 +25,8 @@ public partial class Post
     public virtual ICollection<Comment> Comment { get; set; } = new List<Comment>();
 
     public virtual Community IdCommunityNavigation { get; set; } = null!;
+
+    public virtual PostType IdTypeNavigation { get; set; } = null!;
 
     public virtual User IdUserNavigation { get; set; } = null!;
 }

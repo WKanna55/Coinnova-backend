@@ -1,4 +1,13 @@
+using Coinnova.Application.Interfaces;
+using Coinnova.Application.Mappings;
+using Coinnova.Application.Services;
+using Coinnova.Domain.Interfaces;
+using Coinnova.Domain.Interfaces.Base;
+using Coinnova.Infrastructure.Context;
+using Coinnova.Infrastructure.Repositories;
+using Coinnova.Infrastructure.Repositories.Base;
 using DotNetEnv;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,12 +24,28 @@ Env.Load();
 // Ahora accedemos a las variables de entorno
 var DATABASE_URL = Environment.GetEnvironmentVariable("DATABASE_URL");
 
+// Conexion con la bd
+builder.Services.AddDbContext<ApplicationDbContext>(options => 
+    options.UseNpgsql(DATABASE_URL));
+
 // instalacion swagger 
 builder.Services.AddEndpointsApiExplorer();
-// codiguracion de swagger para poder pasar bearer en el header de la peticion
+// codiguracion de swagger
 builder.Services.AddSwaggerGen();
 
-// ------------------------- app construida -------------------------
+// añadir configuracion de Mapster
+builder.Services.AddMapster();
+
+
+// ---------------------- inyeccion de repositorios y servicios ----------------------
+// Repositorios
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+// Servicios
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+// -------------------------------- app construida --------------------------------
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -29,7 +54,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     // uso de swagger
     app.UseSwagger();
-    // extra de configuracion de swagger para poder pasar bearer en el header de la peticion
+    // extra de configuracion de swagger
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Mi API v1");
@@ -42,8 +67,8 @@ app.UseHttpsRedirection();
 
 // agregar para que funcione
 app.UseRouting();
-app.UseAuthentication(); // agregado para jwt
-app.UseAuthorization();
+//app.UseAuthentication(); // agregado para jwt
+//app.UseAuthorization();
 app.MapControllers(); // para swagger y APIRESTful
 
 

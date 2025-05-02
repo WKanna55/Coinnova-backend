@@ -20,6 +20,8 @@ public partial class Event
 
     public int? Createdby { get; set; }
 
+    public bool VisibilityPrivate { get; set; }
+
     public DateTime? Createdat { get; set; }
 
     public virtual User? CreatedbyNavigation { get; set; }

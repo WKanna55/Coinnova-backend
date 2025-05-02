@@ -20,6 +20,8 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<Comment> Comment { get; set; }
 
+    public virtual DbSet<CommentType> CommentType { get; set; }
+
     public virtual DbSet<Community> Community { get; set; }
 
     public virtual DbSet<CommunityCategory> CommunityCategory { get; set; }
@@ -40,20 +42,18 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<Post> Post { get; set; }
 
+    public virtual DbSet<PostType> PostType { get; set; }
+
+    public virtual DbSet<Role> Role { get; set; }
+
     public virtual DbSet<User> User { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Host=ep-little-star-a4jjx428.us-east-1.aws.neon.tech;Database=Coinnova;Username=Coinnova_owner;Password=npg_N4howcgQ7aBb;Port=5432;SSL Mode=Require;Trust Server Certificate=true");
+        => optionsBuilder.UseNpgsql("Host=ep-curly-salad-a4ttex2g-pooler.us-east-1.aws.neon.tech;Database=coinnovadb;Username=coinnovadb_owner;Password=npg_wJKbFpmILz91;Port=5432;SSL Mode=Require;Trust Server Certificate=true");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder
-            .HasPostgresEnum("comment_type", new[] { "Encontré un problema", "Sugerencia de mejora", "Tengo dudas", "Me gusta la idea" })
-            .HasPostgresEnum("event_visibility", new[] { "public", "private" })
-            .HasPostgresEnum("post_type", new[] { "Validación de prototipo", "Consulta", "Creación de grupo", "Generación de idea" })
-            .HasPostgresEnum("user_role", new[] { "admin", "standard" });
-
         modelBuilder.Entity<Category>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("category_pkey");
@@ -95,6 +95,8 @@ public partial class ApplicationDbContext : DbContext
 
             entity.ToTable("comment");
 
+            entity.HasIndex(e => e.IdType, "idx_comment_type");
+
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Content).HasColumnName("content");
             entity.Property(e => e.Createdat)
@@ -103,6 +105,7 @@ public partial class ApplicationDbContext : DbContext
                 .HasColumnName("createdat");
             entity.Property(e => e.IdParentComment).HasColumnName("id_parent_comment");
             entity.Property(e => e.IdPost).HasColumnName("id_post");
+            entity.Property(e => e.IdType).HasColumnName("id_type");
             entity.Property(e => e.IdUser).HasColumnName("id_user");
             entity.Property(e => e.Likes)
                 .HasDefaultValue(0)
@@ -121,9 +124,26 @@ public partial class ApplicationDbContext : DbContext
                 .HasForeignKey(d => d.IdPost)
                 .HasConstraintName("comment_id_post_fkey");
 
+            entity.HasOne(d => d.IdTypeNavigation).WithMany(p => p.Comment)
+                .HasForeignKey(d => d.IdType)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("comment_id_type_fkey");
+
             entity.HasOne(d => d.IdUserNavigation).WithMany(p => p.Comment)
                 .HasForeignKey(d => d.IdUser)
                 .HasConstraintName("comment_id_user_fkey");
+        });
+
+        modelBuilder.Entity<CommentType>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("comment_type_pkey");
+
+            entity.ToTable("comment_type");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Name)
+                .HasMaxLength(100)
+                .HasColumnName("name");
         });
 
         modelBuilder.Entity<Community>(entity =>
@@ -221,6 +241,7 @@ public partial class ApplicationDbContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("place");
             entity.Property(e => e.Rulesurl).HasColumnName("rulesurl");
+            entity.Property(e => e.VisibilityPrivate).HasColumnName("visibility_private");
 
             entity.HasOne(d => d.CreatedbyNavigation).WithMany(p => p.Event)
                 .HasForeignKey(d => d.Createdby)
@@ -340,12 +361,15 @@ public partial class ApplicationDbContext : DbContext
 
             entity.ToTable("post");
 
+            entity.HasIndex(e => e.IdType, "idx_post_type");
+
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Createdat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdat");
             entity.Property(e => e.IdCommunity).HasColumnName("id_community");
+            entity.Property(e => e.IdType).HasColumnName("id_type");
             entity.Property(e => e.IdUser).HasColumnName("id_user");
             entity.Property(e => e.Imageurl).HasColumnName("imageurl");
             entity.Property(e => e.Likes)
@@ -364,9 +388,38 @@ public partial class ApplicationDbContext : DbContext
                 .HasForeignKey(d => d.IdCommunity)
                 .HasConstraintName("post_id_community_fkey");
 
+            entity.HasOne(d => d.IdTypeNavigation).WithMany(p => p.Post)
+                .HasForeignKey(d => d.IdType)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("post_id_type_fkey");
+
             entity.HasOne(d => d.IdUserNavigation).WithMany(p => p.Post)
                 .HasForeignKey(d => d.IdUser)
                 .HasConstraintName("post_id_user_fkey");
+        });
+
+        modelBuilder.Entity<PostType>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("post_type_pkey");
+
+            entity.ToTable("post_type");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Name)
+                .HasMaxLength(100)
+                .HasColumnName("name");
+        });
+
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("role_pkey");
+
+            entity.ToTable("role");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Name)
+                .HasMaxLength(40)
+                .HasColumnName("name");
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -385,6 +438,7 @@ public partial class ApplicationDbContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("email");
             entity.Property(e => e.IdInstitution).HasColumnName("id_institution");
+            entity.Property(e => e.IdRole).HasColumnName("id_role");
             entity.Property(e => e.Imageurl).HasColumnName("imageurl");
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
@@ -397,6 +451,11 @@ public partial class ApplicationDbContext : DbContext
                 .HasForeignKey(d => d.IdInstitution)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("User_id_institution_fkey");
+
+            entity.HasOne(d => d.IdRoleNavigation).WithMany(p => p.User)
+                .HasForeignKey(d => d.IdRole)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("User_id_role_fkey");
         });
 
         OnModelCreatingPartial(modelBuilder);

@@ -14,6 +14,8 @@ public partial class User
 
     public string? Imageurl { get; set; }
 
+    public int IdRole { get; set; }
+
     public DateTime? Createdat { get; set; }
 
     public int? IdInstitution { get; set; }
@@ -29,6 +31,8 @@ public partial class User
     public virtual ICollection<Event> Event { get; set; } = new List<Event>();
 
     public virtual Institution? IdInstitutionNavigation { get; set; }
+
+    public virtual Role IdRoleNavigation { get; set; } = null!;
 
     public virtual ICollection<Message> Message { get; set; } = new List<Message>();
 

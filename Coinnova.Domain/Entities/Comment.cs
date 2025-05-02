@@ -12,6 +12,8 @@ public partial class Comment
 
     public int? Likes { get; set; }
 
+    public int? IdType { get; set; }
+
     public int IdUser { get; set; }
 
     public int IdPost { get; set; }
@@ -21,6 +23,8 @@ public partial class Comment
     public virtual Comment? IdParentCommentNavigation { get; set; }
 
     public virtual Post IdPostNavigation { get; set; } = null!;
+
+    public virtual CommentType? IdTypeNavigation { get; set; }
 
     public virtual User IdUserNavigation { get; set; } = null!;
 
