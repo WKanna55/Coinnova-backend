@@ -1,3 +1,4 @@
+using Coinnova.API.Extensions;
 using Coinnova.Application.Interfaces;
 using Coinnova.Application.Mappings;
 using Coinnova.Application.Services;
@@ -28,10 +29,9 @@ var DATABASE_URL = Environment.GetEnvironmentVariable("DATABASE_URL");
 builder.Services.AddDbContext<ApplicationDbContext>(options => 
     options.UseNpgsql(DATABASE_URL));
 
-// instalacion swagger 
-builder.Services.AddEndpointsApiExplorer();
-// codiguracion de swagger
-builder.Services.AddSwaggerGen();
+// JWT y Swagger configurados desde extensiones
+builder.Services.AddJwtAuthentication(builder.Configuration);
+builder.Services.AddSwaggerWithJwt();
 
 // añadir configuracion de Mapster
 builder.Services.AddMapster();
@@ -67,8 +67,8 @@ app.UseHttpsRedirection();
 
 // agregar para que funcione
 app.UseRouting();
-//app.UseAuthentication(); // agregado para jwt
-//app.UseAuthorization();
+app.UseAuthentication(); // agregado para jwt
+app.UseAuthorization();
 app.MapControllers(); // para swagger y APIRESTful
 
 
