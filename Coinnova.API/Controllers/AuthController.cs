@@ -1,5 +1,6 @@
 using Coinnova.Application.Dtos.Auth;
 using Coinnova.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Coinnova.API.Controllers;
@@ -39,6 +40,14 @@ public class AuthController : ControllerBase
         
         return Ok(userDto);
     }
+
+    [Authorize(Roles = "standard")]
+    [HttpGet("pruebaAuth")]
+    public IActionResult Prueba()
+    {
+        return Ok();
+    }
+    
 
 
 }
