@@ -18,10 +18,35 @@ public class AuthService : IAuthService
     public async Task<LoginResponseDto> Login(LoginRequestDto loginDto)
     {
         var user = await _unitOfWork.Users.GetByEmail(loginDto.Email);
-        if (user == null || user.Password != loginDto.Password)
-            return default!;
+        if (user == null)
+            return null!;
 
-        return user.Adapt<LoginResponseDto>(); // ← ya aplica el mapeo personalizado
+        var passwordInDb = user.Password;
+
+        // Primero verificar como hash
+        bool isHashedPassword = passwordInDb.StartsWith("$2");
+    
+        if (isHashedPassword)
+        {
+            if (BCrypt.Net.BCrypt.Verify(loginDto.Password, passwordInDb))
+                return user.Adapt<LoginResponseDto>();
+            
+            return null;
+        }
+
+        // Segundo si no era hash, verificar si coincide como texto plano
+        if (loginDto.Password == passwordInDb)
+        {
+            // Migrar el password a hash
+            var hashed = BCrypt.Net.BCrypt.HashPassword(loginDto.Password);
+            user.Password = hashed;
+            await _unitOfWork.Users.Update(user);
+            await _unitOfWork.Complete();
+
+            return user.Adapt<LoginResponseDto>();
+        }
+
+        return null;
     }
 
     public async Task<RegisterResponseDto> Register(RegisterRequestDto registerDto)
@@ -30,6 +55,7 @@ public class AuthService : IAuthService
 
         newUser.IdRole = 2; // rol estandar
         
+        newUser.Password = BCrypt.Net.BCrypt.HashPassword(newUser.Password); // hashear password
         
         await _unitOfWork.Users.Add(newUser);
         await _unitOfWork.Complete();
