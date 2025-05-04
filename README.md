@@ -6,9 +6,9 @@ Este proyecto implementa una arquitectura de **N capas** para mantener una separ
 
 | Capa | Descripción |
 | :--- | :--- |
-| **API** | Capa de presentación. Expone endpoints HTTP a través de los Controllers. |
-| **Application** | Orquesta los casos de uso y la lógica de negocio. Define los DTOs (Data Transfer Objects). |
-| **Domain** | Define las entidades de negocio puras y los contratos de los repositorios (interfaces). |
+| **API** | Capa de presentación. Expone endpoints HTTP a través de los Controllers y Middlewares. |
+| **Application** | Capa de logica de negocio. Orquesta los casos de uso y la lógica de negocio. Define los DTOs y mapeos(Mapster). |
+| **Domain** | Capa de dominio(corazón del sistema) Define las entidades de negocio puras y los contratos de los repositorios (interfaces). |
 | **Infrastructure** | Implementa el acceso a datos y los repositorios. |
 
 ---
@@ -58,3 +58,91 @@ docs(readme): actualizar instrucciones de instalación
 refactor: simplificar lógica de validación
 chore: actualizar dependencias
 ```
+
+---
+
+## Convenciones para manejar los repositorios (nombres)
+
+Idealmente un repositorio maneja una entidad, no acciones o casos de uso, por ejemplo.
+
+```
+/.infrastructure
+  /Repositories
+    /Base
+      Repository.cs
+    UserRepository.cs
+    PostRepository.cs
+    CommentRepository.cs
+    ...
+```
+
+---
+
+## Convenciones para manejar los servicios (nombres)
+
+Los servicios usan nombres que reflejen claramente qué hacen desde el punto de vista del dominio, por ejemplo.
+
+```
+/.Application
+  /Services
+    AuthService.cs ← Lógica de autenticación(asociada a varias entidades).
+    CommentService.cs 
+    PostService.cs
+    UserService.cs ← Lógica asociada a una entidad.
+    ...
+```
+
+---
+
+## Convenciones para manejar dtos (estructura y nombres)
+
+Los Dtos se organizan por entidad o funcion(CRUD) dentro de una carpeta en comun, por ejemplo.
+
+```
+/.Application
+  /Dtos
+    /User
+      - UserGetDto.cs
+      - UserPostDto.cs
+      - UserPutDto.cs
+    /Post
+      - PostGetDto.cs
+      - PostPostDto.cs
+      - PostPutDto.cs
+      ...
+    /Auth
+    ...
+```
+
+Cuando no se trabaja con entidades, si no con casos de uso(no una simple operacion CRUD) como puede ser la autenticacion(Auth) la convencion cambia a request y response, por ejemplo.
+
+```
+/.Application
+  /Dtos
+    /Auth
+      - LoginRequestDto.cs
+      - LoginResponseDto.cs
+      - RegisterRequestDto.cs
+      - RegisterResponseDto.cs
+      - ChangePasswordRequestDto.cs
+      - ChangePasswordReponseDto.cs
+    /Post
+      ...
+      - CreatePostRequestDto.cs
+      - CreatePostResponseDto.cs
+      ...
+```
+
+### Distinción entre CRUD DTO y Caso de Uso DTO
+
+#### DTOs para CRUD (más directos):
+
+1. Propósito: Mapear directamente los datos entre la base de datos y las vistas.
+2. Usos: Crear, leer, actualizar o eliminar registros de forma directa.
+3. Ejemplo: PostGetDto que se usa para  obtener una entidad post.
+
+#### DTOs para Casos de Uso (con lógica de negocio):
+
+1. Propósito: Controlar la entrada y salida de datos que requieren reglas de negocio, validaciones o lógica adicional.
+2. Usos: Operaciones que van más allá de simplemente interactuar con la base de datos (por ejemplo, autenticación, creación de publicaciones con validaciones, etc.).
+3. Ejemplo: CreatePostRequestDto y CreatePostResponseDto, donde la solicitud puede incluir validaciones adicionales (como la longitud del contenido) y el resultado incluye información como la fecha de creación, un ID generado, etc.
