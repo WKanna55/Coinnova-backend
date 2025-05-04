@@ -8,7 +8,7 @@ Este proyecto implementa una arquitectura de **N capas** para mantener una separ
 | :--- | :--- |
 | **API** | Capa de presentación. Expone endpoints HTTP a través de los Controllers y Middlewares. |
 | **Application** | Capa de logica de negocio. Orquesta los casos de uso y la lógica de negocio. Define los DTOs y mapeos(Mapster). |
-| **Domain** | Capa de dominio(corazón del sistema) Define las entidades de negocio puras y los contratos de los repositorios (interfaces). |
+| **Domain** | Capa de dominio(corazón del sistema - Define qué es el negocio y qué reglas tiene) Define las entidades de negocio puras y los contratos de los repositorios (interfaces). |
 | **Infrastructure** | Implementa el acceso a datos y los repositorios. |
 
 ---
@@ -34,7 +34,9 @@ dotnet ef dbcontext scaffold "Host=<your-neon-host.com>;Database=<your_db_name>;
 3. EntityFrameworkCore.Tools
 4. Npgsql.EntityFrameworkCore.PostgreSQL
 5. DotNetEnv
-
+6. Mapster
+7. AspNetCore.Authentication.JwtBearer
+8. BCrypt.Net-Next
 ---
 
 ## Convencional commits para github
