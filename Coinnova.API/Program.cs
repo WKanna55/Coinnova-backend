@@ -41,6 +41,8 @@ builder.Services.AddMapster();
 // Repositorios
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICommunityRepository, CommunityRepository>();
 
 // Servicios
 builder.Services.AddScoped<IAuthService, AuthService>();

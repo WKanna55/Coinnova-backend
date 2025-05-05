@@ -8,4 +8,7 @@ public interface IUnitOfWork : IDisposable
     // inyeccion de repositorios especificos
     IUserRepository Users { get; }
 
+    ICategoryRepository Categories { get; }
+    ICommunityRepository Communities { get; }
+
 }
