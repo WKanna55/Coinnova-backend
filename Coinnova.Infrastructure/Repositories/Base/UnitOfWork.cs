@@ -12,13 +12,16 @@ public class UnitOfWork : IUnitOfWork
     
     // inyeccion repositorios especificos
     public IUserRepository Users { get; }
+    public IPostRepository Posts { get; }
     
-    public UnitOfWork(ApplicationDbContext context, IUserRepository usersRepository)
+    public UnitOfWork(ApplicationDbContext context, IUserRepository usersRepository,
+        IPostRepository postRepository)
     {
         _context = context;
         _repositories = new Hashtable();
         // inyeccion repositorio especificos
         Users = usersRepository;
+        Posts = postRepository;
     }
 
     public Task<int> Complete()
