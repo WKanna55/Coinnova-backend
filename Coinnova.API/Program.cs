@@ -42,12 +42,13 @@ builder.Services.AddMapster();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
+builder.Services.AddScoped<ICommunityRepository, CommunityRepository>();
 
 // Servicios
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPostService, PostService>();
-
+builder.Services.AddScoped<ICommunityService, CommunityService>();
 
 // -------------------------------- app construida --------------------------------
 var app = builder.Build();

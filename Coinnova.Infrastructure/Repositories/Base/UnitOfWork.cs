@@ -1,4 +1,5 @@
 using System.Collections;
+using Coinnova.Application.Interfaces;
 using Coinnova.Domain.Interfaces;
 using Coinnova.Domain.Interfaces.Base;
 using Coinnova.Infrastructure.Context;
@@ -13,15 +14,17 @@ public class UnitOfWork : IUnitOfWork
     // inyeccion repositorios especificos
     public IUserRepository Users { get; }
     public IPostRepository Posts { get; }
+    public ICommunityRepository Communities { get; }
     
     public UnitOfWork(ApplicationDbContext context, IUserRepository usersRepository,
-        IPostRepository postRepository)
+        IPostRepository postRepository, ICommunityRepository communityRepository)
     {
         _context = context;
         _repositories = new Hashtable();
         // inyeccion repositorio especificos
         Users = usersRepository;
         Posts = postRepository;
+        Communities = communityRepository;
     }
 
     public Task<int> Complete()
