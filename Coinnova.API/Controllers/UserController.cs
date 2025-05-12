@@ -7,18 +7,30 @@ using Microsoft.AspNetCore.Mvc;
 namespace Coinnova.API.Controllers;
 
 [ApiController]
-[Route("api/user/")]
+[Route("api/[controller]")]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
     private readonly IPostService _postService;
-
+    
     public UserController(IUserService userService, IPostService postService)
     {
         _userService = userService;
         _postService = postService;
     }
 
+    [Authorize(Roles = "standard")]
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById([FromRoute] int id)
+    {
+        var user = await _userService.GetUserById(id);
+
+        if (user == null) 
+            return NotFound(new { message = $"Usuario con ID: {id} no encotrado." });
+        
+        return Ok(user);
+    }
+    
     [HttpGet]
     public async Task<IActionResult> GetUserInfo(int userId)
     {
@@ -30,7 +42,6 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetUserPosts(int id)
     {
         var posts = await _postService.GetPostsByUserIdAsync(id);
-        Console.Write(posts);
         return Ok(posts);
     }
     

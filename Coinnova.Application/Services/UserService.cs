@@ -1,4 +1,4 @@
-﻿using Coinnova.Application.Dtos.User;
+using Coinnova.Application.Dtos.User;
 using Coinnova.Application.Interfaces;
 using Coinnova.Domain.Entities;
 using Coinnova.Domain.Interfaces.Base;
@@ -16,6 +16,16 @@ public class UserService : IUserService
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+    }
+
+    public async Task<UserGetDto?> GetUserById(int id)
+    {
+        var user = await _unitOfWork.Repository<User>().GetById(id);
+
+        if (user == null) 
+            return null;
+
+        return user.Adapt<UserGetDto>();
     }
 
     public async Task<UserDto> GetUserInfoById(int userId)

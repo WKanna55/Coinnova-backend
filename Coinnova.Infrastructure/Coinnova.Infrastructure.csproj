@@ -26,6 +26,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Coinnova.Application\Coinnova.Application.csproj" />
       <ProjectReference Include="..\Coinnova.Domain\Coinnova.Domain.csproj" />
     </ItemGroup>
 

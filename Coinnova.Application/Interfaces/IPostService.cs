@@ -1,11 +1,13 @@
-﻿using Coinnova.Application.Dtos.Post;
+using Coinnova.Application.Dtos.Common;
+using Coinnova.Application.Dtos.Post;
 
 namespace Coinnova.Application.Interfaces;
 
 public interface IPostService
 {
-    public Task<IEnumerable<BasePostDto>> GetPostsByUserIdAsync(int userId);
+    Task<PagedResponseDto<PostsForUserIdResponseDto>> GetPostsForUserId(int id, int skip, int take);
+    Task<IEnumerable<BasePostDto>> GetPostsByUserIdAsync(int userId);
 
-    public Task<PostDetailsDto> GetPostDetailsById(int postId);
+    Task<PostDetailsDto> GetPostDetailsById(int postId);
     // public Task<int> CountPostsByUserIdAsync(int userId);
 }
