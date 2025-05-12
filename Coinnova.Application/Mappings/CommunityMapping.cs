@@ -1,3 +1,4 @@
+using Coinnova.Application.Dtos.Community;
 using Coinnova.Domain.Entities;
 using Mapster;
 
