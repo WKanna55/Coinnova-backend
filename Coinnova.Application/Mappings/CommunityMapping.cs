@@ -1,4 +1,3 @@
-using Coinnova.Application.Dtos.Community;
 using Coinnova.Domain.Entities;
 using Mapster;
 
@@ -23,5 +22,8 @@ public class CommunityMapping : IRegister
             .Map(dest => dest.Name, src => src.Name)
             .Map(dest => dest.NumberOfMembers, src => src.CommunityMember.Count);
         
+        config.NewConfig<Community, CommunitySimpleDto>()
+            .Map(dest => dest.Id, src => src.Id)
+            .Map(dest => dest.Name, src => src.Name);
     }
 }

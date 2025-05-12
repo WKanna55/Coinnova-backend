@@ -15,9 +15,10 @@ public class UnitOfWork : IUnitOfWork
     public IUserRepository Users { get; }
     public IPostRepository Posts { get; }
     public ICommunityRepository Communities { get; }
+    public ICommentRepository Comments { get; }
     
     public UnitOfWork(ApplicationDbContext context, IUserRepository usersRepository,
-        IPostRepository postRepository, ICommunityRepository communityRepository)
+        IPostRepository postRepository, ICommunityRepository communityRepository, ICommentRepository commentsRepository)
     {
         _context = context;
         _repositories = new Hashtable();
@@ -25,6 +26,7 @@ public class UnitOfWork : IUnitOfWork
         Users = usersRepository;
         Posts = postRepository;
         Communities = communityRepository;
+        Comments = commentsRepository;
     }
 
     public Task<int> Complete()

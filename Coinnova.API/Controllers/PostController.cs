@@ -21,4 +21,10 @@ public class PostController : ControllerBase
         return Ok(posts);
     }
 
+    [HttpGet("{postId}")]
+    public async Task<IActionResult> GetPostDetails(int postId)
+    {
+        var post = await _postService.GetPostDetailsById(postId);
+        return Ok(post);
+    }
 }
