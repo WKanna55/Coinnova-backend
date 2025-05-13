@@ -23,7 +23,7 @@ builder.Services.AddControllers();
 Env.Load();
 
 // Ahora accedemos a las variables de entorno
-var DATABASE_URL = Environment.GetEnvironmentVariable("DATABASE_URL");
+var DATABASE_URL = Environment.GetEnvironmentVariable("DATABASE_DBCONTEXT");
 
 // Conexion con la bd
 builder.Services.AddDbContext<ApplicationDbContext>(options => 
