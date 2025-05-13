@@ -21,7 +21,7 @@ public class UnitOfWork : IUnitOfWork
         _repositories = new Hashtable();
         // inyeccion repositorio especificos
         Users = usersRepository;
-        Categories = categoryRepository;
+        Categories = categoryRepository;    
         Communities = communityRepository;
     }
 
