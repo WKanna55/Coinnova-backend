@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Coinnova.API.Controllers;
 
 [ApiController]
+[Authorize(Roles = "standard")]
 [Route("api/[controller]")]
 public class UserController : ControllerBase
 {
@@ -18,8 +19,7 @@ public class UserController : ControllerBase
         _userService = userService;
         _postService = postService;
     }
-
-    [Authorize(Roles = "standard")]
+    
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById([FromRoute] int id)
     {
@@ -45,7 +45,7 @@ public class UserController : ControllerBase
         return Ok(posts);
     }
     
-    [HttpPut, Authorize]
+    [HttpPut]
     public async Task<IActionResult> EditProfile([FromBody] UpdateUserRequestDto dto)
     {
         var claim = User.FindFirstValue(ClaimTypes.NameIdentifier) 

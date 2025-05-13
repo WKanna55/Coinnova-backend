@@ -1,10 +1,12 @@
 ﻿using Coinnova.Application.Dtos.Comment;
 using Coinnova.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Coinnova.API.Controllers;
 
 [ApiController]
+[Authorize(Roles = "standard")]
 [Route("api/comment")]
 public class CommentController : ControllerBase
 {
