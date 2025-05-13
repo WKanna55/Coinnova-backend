@@ -1,4 +1,4 @@
-﻿namespace Coinnova.Domain.Entities;
+namespace Coinnova.Domain.Entities;
 
 public partial class User
 {
