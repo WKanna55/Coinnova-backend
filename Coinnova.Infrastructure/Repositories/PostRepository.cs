@@ -15,10 +15,10 @@ public class PostRepository : Repository<Post>, IPostRepository
         this._context = _context;
     }
 
-    public async Task<IOrderedQueryable<Post>> GetCommunitiesPostsForUserId(int id)
+    public async Task<IOrderedQueryable<Post>> QueryPostsForUser(int userId)
     {
         var communityIds = await _context.CommunityMember
-            .Where(cm => cm.IdUser == id)
+            .Where(cm => cm.IdUser == userId)
             .Select(cm => cm.IdCommunity)
             .ToListAsync();
 
@@ -50,5 +50,13 @@ public class PostRepository : Repository<Post>, IPostRepository
             .Include(p => p.Comment)
                 .ThenInclude(c => c.InverseIdParentCommentNavigation)
             .FirstOrDefaultAsync(p => p.Id == postId);
+    }
+
+    public async Task<IOrderedQueryable<Post>> GetPostsByCommunityId(int communityId)
+    {
+        var query = _context.Post
+            .Where(p => p.IdCommunity == communityId)
+            .OrderByDescending(p => p.Createdat);
+        return await Task.FromResult(query);
     }
 } 

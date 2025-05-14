@@ -16,16 +16,18 @@ public class UnitOfWork : IUnitOfWork
     public ICommunityRepository Communities { get; }
     public ICommentRepository Comments { get; }
     public ICategoryRepository Categories { get; }
+    public IEventRepository Events { get; }
     
     public UnitOfWork(ApplicationDbContext context, IUserRepository usersRepository,
         IPostRepository postRepository, ICommunityRepository communityRepository, ICommentRepository commentsRepository,
-        ICategoryRepository categoryRepository)
+        ICategoryRepository categoryRepository, IEventRepository events)
     {
         _context = context;
         _repositories = new Hashtable();
         // inyeccion repositorio especificos
         Users = usersRepository;
         Categories = categoryRepository;
+        Events = events;
         Posts = postRepository;
         Communities = communityRepository;
     }

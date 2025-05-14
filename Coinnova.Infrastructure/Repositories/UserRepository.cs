@@ -29,5 +29,17 @@ public class UserRepository : Repository<User>, IUserRepository
             .Include(u => u.IdInstitutionNavigation)
             .FirstOrDefaultAsync(u => u.Id == id);
     }
+
+    public async Task<IEnumerable<User>> GetFirstMembersByCommunityId(int communityId, int count)
+    {
+        var members = await _context.CommunityMember
+            .Where(cm => cm.IdCommunity == communityId)
+            .OrderBy(cm => cm.Joinedat)
+            .Select(cm => cm.IdUserNavigation)
+            .Take(count)
+            .ToListAsync();
+        
+        return members;
+    }
     
 }
