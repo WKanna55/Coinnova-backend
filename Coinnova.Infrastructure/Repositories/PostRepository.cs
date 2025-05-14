@@ -15,10 +15,10 @@ public class PostRepository : Repository<Post>, IPostRepository
         this._context = _context;
     }
 
-    public async Task<IOrderedQueryable<Post>> GetCommunitiesPostsForUserId(int id)
+    public async Task<IOrderedQueryable<Post>> QueryPostsForUser(int userId)
     {
         var communityIds = await _context.CommunityMember
-            .Where(cm => cm.IdUser == id)
+            .Where(cm => cm.IdUser == userId)
             .Select(cm => cm.IdCommunity)
             .ToListAsync();
 
