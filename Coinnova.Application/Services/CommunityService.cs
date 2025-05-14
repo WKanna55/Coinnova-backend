@@ -27,7 +27,7 @@ public class CommunityService : ICommunityService
             Id = c.Id,
             Name = c.Name,
             NumberOfMembers = c.CommunityMember.Count()
-        }).ToListAsync();
+        }).Take(5).ToListAsync();
 
         return communities;
 
