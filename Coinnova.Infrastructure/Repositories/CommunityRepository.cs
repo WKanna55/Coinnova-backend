@@ -22,15 +22,10 @@ public class CommunityRepository : Repository<Community>, ICommunityRepository
         return number;
     }
     
-    public IQueryable<object> GetPopularCommunities()
+    public IQueryable<Community> QueryComunityWithMembers()
     {
         var communities = _context.Community
-            .Select(c => new
-            {
-                Community = c,
-                MemberCount = _context.CommunityMember.Count(cm => cm.IdCommunity == c.Id)
-            })
-            .OrderByDescending(c => c.MemberCount);
+            .Include(c => c.CommunityMember);
 
         return communities;
     }
