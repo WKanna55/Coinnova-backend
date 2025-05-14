@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Coinnova.API.Controllers;
 
 [ApiController]
-[Authorize(Roles="admin")]
+[Authorize(Roles="standard")]
 [Route("api/[controller]")]
 public class PostController : ControllerBase
 {
