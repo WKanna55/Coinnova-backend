@@ -20,11 +20,16 @@ public class CommunityService : ICommunityService
      */
     public async Task<List<CommunityGetDto>> Get5PopularCommunities()
     {
-        var query = _unitOfWork.Communities.GetPopularCommunities();
+        var query = _unitOfWork.Communities.QueryComunityWithMembers();
 
-        var communities = await query.Take(5).ToListAsync();
+        var communities = await query.Select(c => new CommunityGetDto
+        {
+            Id = c.Id,
+            Name = c.Name,
+            NumberOfMembers = c.CommunityMember.Count()
+        }).ToListAsync();
 
-        return communities.Adapt<List<CommunityGetDto>>();
+        return communities;
 
     }
     

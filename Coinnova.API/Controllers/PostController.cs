@@ -17,7 +17,7 @@ public class PostController : ControllerBase
     [HttpGet("user-feed/{id}")]
     public async Task<IActionResult> PostsForUserId([FromRoute] int id, [FromQuery]int skip, [FromQuery] int take)
     {
-        var posts = await _postService.GetPostsForUserId(id, skip, take);
+        var posts = await _postService.GetPostsForUserFeedById(id, skip, take);
         return Ok(posts);
     }
 

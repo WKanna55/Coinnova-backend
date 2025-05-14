@@ -17,9 +17,9 @@ public class PostService : IPostService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<PagedResponseDto<PostsForUserIdResponseDto>> GetPostsForUserId(int id, int skip, int take)
+    public async Task<PagedResponseDto<PostsForUserIdResponseDto>> GetPostsForUserFeedById(int userId, int skip, int take)
     {
-        var query = await _unitOfWork.Posts.GetCommunitiesPostsForUserId(id);
+        var query = await _unitOfWork.Posts.QueryPostsForUser(userId);
 
         var totalPosts = await query.CountAsync();
 
