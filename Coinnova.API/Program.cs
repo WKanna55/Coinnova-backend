@@ -36,6 +36,16 @@ builder.Services.AddSwaggerWithJwt();
 // añadir configuracion de Mapster
 builder.Services.AddMapster();
 
+// Agregar política de CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 // ---------------------- inyeccion de repositorios y servicios ----------------------
 // Repositorios
@@ -45,6 +55,7 @@ builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<ICommunityRepository, CommunityRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IEventRepository, EventRepository>();
 
 // Servicios
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -53,6 +64,7 @@ builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<ICommunityService, CommunityService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IEventService, EventService>();
 
 // -------------------------------- app construida --------------------------------
 var app = builder.Build();
@@ -77,6 +89,7 @@ app.UseHttpsRedirection();
 // agregar para que funcione
 app.UseRouting();
 app.UseAuthentication(); // agregado para jwt
+app.UseCors("AllowFrontend");
 app.UseAuthorization();
 app.MapControllers(); // para swagger y APIRESTful
 

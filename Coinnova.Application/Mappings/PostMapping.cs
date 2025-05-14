@@ -29,5 +29,16 @@ public class PostMapping : IRegister
             .Map(dest => dest.Comments, src => src.Comment
                 .Where(c => c.IdParentComment == null)
                 .Adapt<ICollection<CommentWithRepliesDto>>());
+
+        config.NewConfig<Post, PostsForCommunityDto>()
+            .Map(dest => dest.Id, src => src.Id)
+            .Map(dest => dest.Title, src => src.Title)
+            .Map(dest => dest.TextContent, src => src.Textcontent)
+            .Map(dest => dest.CreatedAt, src => src.Createdat)
+            .Map(dest => dest.Likes, src => src.Likes)
+            .Map(dest => dest.ImageUrl, src => src.Imageurl)
+            .Map(dest => dest.AuthorName, src => src.IdUserNavigation.Name)
+            .Map(dest => dest.PostTypeName, src => src.IdTypeNavigation.Name)
+            .Map(dest => dest.CommentsCount, src => src.Comment.Count);
     }
 }

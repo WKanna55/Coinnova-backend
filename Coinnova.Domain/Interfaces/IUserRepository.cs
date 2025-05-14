@@ -6,4 +6,5 @@ namespace Coinnova.Domain.Interfaces;
 public interface IUserRepository : IRepository<User>
 {
     Task<User?> GetByEmail(string email);
+    Task<IEnumerable<User>> GetFirstMembersByCommunityId(int communityId, int count);
 }
