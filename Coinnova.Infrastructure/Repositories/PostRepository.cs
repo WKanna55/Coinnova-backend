@@ -51,4 +51,12 @@ public class PostRepository : Repository<Post>, IPostRepository
                 .ThenInclude(c => c.InverseIdParentCommentNavigation)
             .FirstOrDefaultAsync(p => p.Id == postId);
     }
+
+    public async Task<IOrderedQueryable<Post>> GetPostsByCommunityId(int communityId)
+    {
+        var query = _context.Post
+            .Where(p => p.IdCommunity == communityId)
+            .OrderByDescending(p => p.Createdat);
+        return await Task.FromResult(query);
+    }
 } 

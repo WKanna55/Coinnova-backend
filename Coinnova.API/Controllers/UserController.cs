@@ -57,4 +57,11 @@ public class UserController : ControllerBase
         var response = await _userService.UpdateUserAsync(userId, dto);
         return Ok(response);
     }
+
+    [HttpGet("/community/{id}/members")]
+    public async Task<IActionResult> GetFirstMembers([FromRoute] int id)
+    {
+        var members = await _userService.GetFirstCommunityMembers(id);
+        return Ok(members);
+    }
 }

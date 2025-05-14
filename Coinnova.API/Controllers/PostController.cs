@@ -27,4 +27,11 @@ public class PostController : ControllerBase
         var post = await _postService.GetPostDetailsById(postId);
         return Ok(post);
     }
+
+    [HttpGet("community/{id}/posts")]
+    public async Task<IActionResult> PostsByCommunityId([FromRoute] int id, [FromQuery] int skip, [FromQuery] int take)
+    {
+        var posts = await _postService.GetPostsByCommunityId(id, skip, take);
+        return Ok(posts);
+    }
 }
