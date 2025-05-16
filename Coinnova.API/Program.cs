@@ -7,6 +7,7 @@ using Coinnova.Domain.Interfaces.Base;
 using Coinnova.Infrastructure.Context;
 using Coinnova.Infrastructure.Repositories;
 using Coinnova.Infrastructure.Repositories.Base;
+using Coinnova.Infrastructure.Services;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -65,6 +66,7 @@ builder.Services.AddScoped<ICommunityService, CommunityService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
 
 // -------------------------------- app construida --------------------------------
 var app = builder.Build();

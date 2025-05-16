@@ -14,10 +14,12 @@ namespace Coinnova.Application.Services;
 public class AuthService : IAuthService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IGoogleAuthService _googleAuthService;
 
-    public AuthService(IUnitOfWork unitOfWork, IConfiguration config)
+    public AuthService(IUnitOfWork unitOfWork, IConfiguration config, IGoogleAuthService googleAuthService)
     {
         _unitOfWork = unitOfWork;
+        _googleAuthService = googleAuthService;
     }
 
     public async Task<LoginResponseDto> Login(LoginRequestDto loginDto)
@@ -42,7 +44,65 @@ public class AuthService : IAuthService
             await _unitOfWork.Complete();
         }
 
-        // Generar token
+        var token = GenerateJwtToken(user);
+
+        return new LoginResponseDto
+        {
+            Token = token
+        };
+    }
+
+    public async Task<RegisterResponseDto> Register(RegisterRequestDto registerDto)
+    {
+        var newUser = registerDto.Adapt<User>();
+
+        newUser.IdRole = 2; // rol estandar
+        
+        newUser.Password = BCrypt.Net.BCrypt.HashPassword(newUser.Password); // hashear password
+        
+        await _unitOfWork.Users.Add(newUser);
+        await _unitOfWork.Complete();
+        
+        return newUser.Adapt<RegisterResponseDto>();
+    }
+
+    public async Task<LoginResponseDto?> LoginWithGoogleAsync(string idToken)
+    {
+        var googleUser = await _googleAuthService.ValidateIdTokenAsync(idToken);
+        
+        if (googleUser == null)
+        {
+            return null;
+        }
+
+        var user = await _unitOfWork.Users.GetByEmail(googleUser.Email);
+        
+        if (user == null)
+        {
+            user = new User
+            {
+                Name = googleUser.Name,
+                Email = googleUser.Email,
+                Password = "oauth",
+                Imageurl = googleUser.Picture,
+                Createdat = DateTime.UtcNow,
+                IdRole = 2
+            };
+
+            await _unitOfWork.Users.Add(user);
+            await _unitOfWork.Complete();
+        }
+
+        var token = GenerateJwtToken(user);
+
+        return new LoginResponseDto
+        {
+            Token = token
+        };
+    }
+    
+    private string GenerateJwtToken(User user)
+    {
         var claims = new[]
         {
             new Claim("UserId", user.Id.ToString()),
@@ -64,26 +124,7 @@ public class AuthService : IAuthService
             signingCredentials: creds
         );
 
-        return new LoginResponseDto
-        {
-            Token = new JwtSecurityTokenHandler().WriteToken(token)
-        };
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
-
-    public async Task<RegisterResponseDto> Register(RegisterRequestDto registerDto)
-    {
-        var newUser = registerDto.Adapt<User>();
-
-        newUser.IdRole = 2; // rol estandar
-        
-        newUser.Password = BCrypt.Net.BCrypt.HashPassword(newUser.Password); // hashear password
-        
-        await _unitOfWork.Users.Add(newUser);
-        await _unitOfWork.Complete();
-        
-        return newUser.Adapt<RegisterResponseDto>();
-    }
-    
-    
     
 }
