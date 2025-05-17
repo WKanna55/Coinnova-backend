@@ -28,15 +28,37 @@ public class PostRepository : Repository<Post>, IPostRepository
         
         return query;
     } 
-    
-    public async Task<IEnumerable<Post>> GetPostsByUserIdAsync(int userId)
+
+    public async Task<(IEnumerable<Post> Posts, int TotalCount)> GetPostsByUserIdAsync(int userId, int skip, int take)
     {
-        return await _context.Post
+        var query = _context.Post
             .Where(p => p.IdUser == userId)
-            .Include(p => p.IdTypeNavigation)
-            .Include(p => p.IdCommunityNavigation)
-            .Include(p => p.Comment)
-            .ToArrayAsync();
+            .OrderByDescending(p => p.Createdat);
+
+        var totalCount = await query.CountAsync();
+
+        var posts = await query
+            .Skip(skip)
+            .Take(take)
+            .Select(p => new
+            {
+                Post = p,
+                Type = p.IdTypeNavigation,
+                Community = p.IdCommunityNavigation,
+                Author = p.IdUserNavigation,
+                CommentCount = _context.Comment.Count(c => c.IdPost == p.Id)
+            }).ToListAsync();
+        
+        var result = posts.Select(p =>
+        {
+            p.Post.IdTypeNavigation = p.Type;
+            p.Post.IdCommunityNavigation = p.Community;
+            p.Post.IdUserNavigation = p.Author;
+            p.Post.CommentCount = p.CommentCount;
+            return p.Post;
+        }).ToList();
+
+        return (result, totalCount);
     }
 
     public async Task<Post?> GetPostDetailsByIdAsync(int postId)
@@ -46,9 +68,6 @@ public class PostRepository : Repository<Post>, IPostRepository
             .Include(p => p.IdUserNavigation)
             .Include(p => p.IdTypeNavigation)
             .Include(p => p.Comment)
-                .ThenInclude(c => c.IdUserNavigation)
-            .Include(p => p.Comment)
-                .ThenInclude(c => c.InverseIdParentCommentNavigation)
             .FirstOrDefaultAsync(p => p.Id == postId);
     }
 

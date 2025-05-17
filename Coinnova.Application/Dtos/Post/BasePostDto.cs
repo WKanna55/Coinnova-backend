@@ -1,4 +1,7 @@
-﻿namespace Coinnova.Application.Dtos.Post;
+﻿using Coinnova.Application.Dtos.Community;
+using Coinnova.Application.Dtos.User;
+
+namespace Coinnova.Application.Dtos.Post;
 
 public class BasePostDto
 {
@@ -10,7 +13,9 @@ public class BasePostDto
     public int Likes { get; set; }
     public required string PostTypeName { get; set; }
     public required string ImageUrl { get; set; }
-    public int CommentsCount { get; set; }
+    public int CommentCount { get; set; }
+    public required UserSimpleDto Author { get; set; }
+    public required CommunitySimpleDto Community { get; set; }
 }
 
 

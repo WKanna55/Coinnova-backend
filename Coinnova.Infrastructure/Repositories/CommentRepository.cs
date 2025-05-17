@@ -15,23 +15,43 @@ public class CommentRepository : Repository<Comment>, ICommentRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<Comment>> GetAllRootCommentsByPostId(int postId)
+    public async Task<IEnumerable<(Comment Comment, int ReplyCount)>> GetRootCommentsWithReplyCountAsync(int postId)
     {
-        return await _context.Comment
+        var commentsWithData = await _context.Comment
             .Where(c => c.IdPost == postId && c.IdParentComment == null)
-            .Include(c => c.IdTypeNavigation)
             .Include(c => c.IdUserNavigation)
-            .OrderBy(c => c.Createdat)
+            .Include(c => c.IdTypeNavigation)
+            .Select(c => new
+            {
+                CommentEntity = c,
+                CountOfReplies = c.InverseIdParentCommentNavigation.Count()
+            })
+            .OrderBy(c => c.CommentEntity.Createdat)
             .ToListAsync();
+
+        return commentsWithData.Select(data => (data.CommentEntity, data.CountOfReplies));
     }
 
-    public async Task<IEnumerable<Comment>> GetAllRepliesByCommentId(int commentId)
+    public async Task<IEnumerable<(Comment Comment, int ReplyCount)>> GetRepliesWithReplyCountAsync(int parentCommentId)
+    {
+        var repliesWithData = await _context.Comment
+            .Where(c => c.IdParentComment == parentCommentId)
+            .Include(c => c.IdUserNavigation)
+            .Include(c => c.IdTypeNavigation)
+            .Select(c => new
+            {
+                CommentEntity = c,
+                CountOfReplies = c.InverseIdParentCommentNavigation.Count()
+            })
+            .OrderBy(c => c.CommentEntity.Createdat)
+            .ToListAsync();
+
+        return repliesWithData.Select(data => (data.CommentEntity, data.CountOfReplies));
+    }
+    
+    public async Task<int> CountRepliesByCommentIdAsync(int commentId)
     {
         return await _context.Comment
-            .Where(c => c.IdParentComment == commentId)
-            .Include(c => c.IdTypeNavigation)
-            .Include(c => c.IdUserNavigation)
-            .OrderBy(c => c.Createdat)
-            .ToListAsync();
+            .CountAsync(c => c.IdParentComment == commentId);
     }
 }
