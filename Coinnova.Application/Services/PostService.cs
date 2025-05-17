@@ -35,41 +35,28 @@ public class PostService : IPostService
         };
     }
     
-    public async Task<IEnumerable<BasePostDto>> GetPostsByUserIdAsync(int userId)
+    public async Task<PagedResponseDto<BasePostDto>> GetPostsByUserIdAsync(int userId, int skip = 0, int take = 10)
     {
-        var posts = await _unitOfWork.Posts.GetPostsByUserIdAsync(userId);
-        return posts.Adapt<IEnumerable<BasePostDto>>();
+        var (posts, totalCount) = await _unitOfWork.Posts.GetPostsByUserIdAsync(userId, skip, take);
+        var postDtos = posts.Adapt<IEnumerable<BasePostDto>>();
+
+        return new PagedResponseDto<BasePostDto>
+        {
+            Items = postDtos,
+            TotalCount = totalCount,
+            HasMore = totalCount > (skip + take)
+        };
     }
     
-    public async Task<PostDetailsDto> GetPostDetailsById(int postId)
+    public async Task<BasePostDto> GetPostDetailsById(int postId)
     {
         var post = await _unitOfWork.Posts.GetPostDetailsByIdAsync(postId);
+        Console.WriteLine(post);
         if (post == null)
         {
             throw new KeyNotFoundException($"No existe esta publicación");
         }
         
-        return post.Adapt<PostDetailsDto>();
+        return post.Adapt<BasePostDto>();
     }
-
-    // public async Task<PostDetailsDto> GetPostDetailsById(int postId)
-    // {
-    //     var post = await _unitOfWork.Posts.GetPostDetailsByIdAsync(postId);
-    //     if (post == null)
-    //     {
-    //         throw new KeyNotFoundException($"No existe esta publicación");
-    //     }
-    //
-    //     var postDto = post.Adapt<PostDetailsDto>();
-    //
-    //     var rootComments = post.Comment?
-    //         .Where(c => c.IdParentComment == null)
-    //         .OrderBy(c => c.Createdat)
-    //         .Select(c => CommentMapperHelper.MapWithDepth(c))
-    //         .ToList();
-    //
-    //     postDto.Comments = rootComments ?? new List<CommentWithRepliesDto>();
-    //
-    //     return postDto;
-    // }
 }

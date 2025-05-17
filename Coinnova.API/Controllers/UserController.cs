@@ -11,12 +11,10 @@ namespace Coinnova.API.Controllers;
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
-    private readonly IPostService _postService;
     
-    public UserController(IUserService userService, IPostService postService)
+    public UserController(IUserService userService)
     {
         _userService = userService;
-        _postService = postService;
     }
 
     [Authorize(Roles = "standard")]
@@ -36,13 +34,6 @@ public class UserController : ControllerBase
     {
         var user = await _userService.GetUserInfoById(userId);
         return Ok(user);
-    }
-
-    [HttpGet("{id}/posts")]
-    public async Task<IActionResult> GetUserPosts(int id)
-    {
-        var posts = await _postService.GetPostsByUserIdAsync(id);
-        return Ok(posts);
     }
     
     [HttpPut, Authorize]

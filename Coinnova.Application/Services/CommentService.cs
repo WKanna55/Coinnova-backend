@@ -9,51 +9,65 @@ namespace Coinnova.Application.Services;
 public class CommentService : ICommentService
 {
     private readonly IUnitOfWork _unitOfWork;
+    
+    private const int DefaultRequestedDepth = 1; // Profundidad si el cliente no especifica (raíz + 1 nivel de respuestas)
+    private const int MaxAllowedDepth = 3;       // Máxima profundidad que el backend procesará para evitar abusos.
+    private const int MaxRepliesToLoadThreshold = 10; // Si un comentario tiene más respuestas que esto, no se cargan sus hijos en este DTO.
 
     public CommentService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<IEnumerable<CommentWithRepliesDto>> GetCommentsWithRepliesByPostIdAsync(int postId)
+    public async Task<IEnumerable<CommentWithRepliesDto>> GetCommentsWithRepliesByPostIdAsync(int postId, int? requestDepth = null)
     {
-        var rootComments = await _unitOfWork.Comments.GetAllRootCommentsByPostId(postId);
-        var result = new List<CommentWithRepliesDto>();
+        var effectiveDepth = Math.Min(requestDepth ?? DefaultRequestedDepth, MaxAllowedDepth);
+        var rootCommentsData = await _unitOfWork.Comments.GetRootCommentsWithReplyCountAsync(postId);
 
-        foreach (var root in rootComments)
+        var resultDtos = new List<CommentWithRepliesDto>();
+
+        foreach (var rootData in rootCommentsData)
         {
-            var rootDto = await BuildCommentWithRepliesAsync(root, 3);
-            result.Add(rootDto);
+            var dto = await BuildCommentWithRepliesAsync(rootData.Comment, rootData.ReplyCount, 0, effectiveDepth);
+            resultDtos.Add(dto);
         }
 
-        return result;
+        return resultDtos;
     }
     
-    private async Task<CommentWithRepliesDto> BuildCommentWithRepliesAsync(Comment comment, int depth)
+    private async Task<CommentWithRepliesDto> BuildCommentWithRepliesAsync(
+        Comment comment,
+        int replyCountForThisComment,
+        int currentDepthLevel,
+        int targetDepth)
     {
-        // Creamos el DTO base
         var dto = comment.Adapt<CommentWithRepliesDto>();
 
-        if (depth <= 0) 
+        dto.RepliesCount = replyCountForThisComment;
+
+        if (currentDepthLevel < targetDepth && replyCountForThisComment > 0 && replyCountForThisComment <= MaxRepliesToLoadThreshold)
         {
-            // Si ya no queremos profundizar, RepliesCount = 0
-            dto.RepliesCount = 0;
-            return dto;
+            var repliesData = await _unitOfWork.Comments.GetRepliesWithReplyCountAsync(comment.Id);
+            
+            foreach (var replyData in repliesData) // repliesData ya está ordenado por CreatedAt en el repositorio
+            {
+                var replyDto = await BuildCommentWithRepliesAsync(replyData.Comment, replyData.ReplyCount, currentDepthLevel + 1, targetDepth);
+                dto.Replies.Add(replyDto); // Add individual DTO a la lista
+            }
         }
-
-        // 1) Obtenemos todas las respuestas directas
-        var replies = await _unitOfWork.Comments.GetAllRepliesByCommentId(comment.Id);
-
-        // 2) Fijamos el contador en función del número de replies directas
-        dto.RepliesCount = replies.Count();
-
-        // 3) Para cada respuesta, creamos su DTO recursivamente
-        foreach (var reply in replies.OrderBy(r => r.Createdat))
-        {
-            var replyDto = await BuildCommentWithRepliesAsync(reply, depth - 1);
-            dto.Replies.Add(replyDto);
-        }
-
+        
         return dto;
+
+        // if (currentDepthLevel >= targetDepth || replyCountForThisComment <= 0 || replyCountForThisComment > MaxRepliesToLoadThreshold)
+        //     return dto;
+        //
+        // var repliesData = await _unitOfWork.Comments.GetRepliesWithReplyCountAsync(comment.Id);
+        //
+        // foreach (var replyData in repliesData)
+        // {
+        //     var replyDto = await BuildCommentWithRepliesAsync(replyData.Comment, replyData.ReplyCount,
+        //         currentDepthLevel + 1, targetDepth);
+        //     dto.Replies.Add(replyDto);
+        // }
     }
 }

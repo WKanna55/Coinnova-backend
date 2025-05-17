@@ -16,9 +16,9 @@ public class CommentController : ControllerBase
     }
 
     [HttpGet("post/{postId}")]
-    public async Task<IActionResult> GetAllCommentsByPostId(int postId)
+    public async Task<IActionResult> GetAllCommentsByPostId(int postId, [FromQuery] int? depth)
     {
-        var comments = await _commentService.GetCommentsWithRepliesByPostIdAsync(postId);
+        var comments = await _commentService.GetCommentsWithRepliesByPostIdAsync(postId, depth);
         return Ok(comments);
     }
 }
