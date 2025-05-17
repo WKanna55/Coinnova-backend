@@ -29,9 +29,10 @@ public class PostRepository : Repository<Post>, IPostRepository
         return query;
     } 
 
-    public async Task<(IEnumerable<Post> Posts, int TotalCount)> GetPostsByUserIdAsync(int userId, int skip, int take)
+    public async Task<(IEnumerable<Post> Posts, int totalCount)> GetPostsByUserIdAsync(int userId, int skip, int take)
     {
         var query = _context.Post
+            .AsNoTracking()
             .Where(p => p.IdUser == userId)
             .OrderByDescending(p => p.Createdat);
 
@@ -40,25 +41,23 @@ public class PostRepository : Repository<Post>, IPostRepository
         var posts = await query
             .Skip(skip)
             .Take(take)
-            .Select(p => new
-            {
-                Post = p,
-                Type = p.IdTypeNavigation,
-                Community = p.IdCommunityNavigation,
-                Author = p.IdUserNavigation,
-                CommentCount = _context.Comment.Count(c => c.IdPost == p.Id)
-            }).ToListAsync();
-        
-        var result = posts.Select(p =>
-        {
-            p.Post.IdTypeNavigation = p.Type;
-            p.Post.IdCommunityNavigation = p.Community;
-            p.Post.IdUserNavigation = p.Author;
-            p.Post.CommentCount = p.CommentCount;
-            return p.Post;
-        }).ToList();
+            .Select(p => new Post {
+                Id = p.Id,
+                IdCommunity = p.IdCommunity,
+                Createdat = p.Createdat,
+                Updatedat = p.Updatedat,
+                Title = p.Title,
+                Textcontent = p.Textcontent,
+                Imageurl = p.Imageurl,
+                Likes = p.Likes,
+                CommentCount = p.CommentCount,
+                IdTypeNavigation = p.IdTypeNavigation,
+                IdCommunityNavigation = p.IdCommunityNavigation,
+                IdUserNavigation = p.IdUserNavigation,
+            })
+            .ToListAsync();
 
-        return (result, totalCount);
+        return (posts, totalCount);
     }
 
     public async Task<Post?> GetPostDetailsByIdAsync(int postId)

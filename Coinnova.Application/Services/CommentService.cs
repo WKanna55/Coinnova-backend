@@ -10,8 +10,7 @@ public class CommentService : ICommentService
 {
     private readonly IUnitOfWork _unitOfWork;
     
-    private const int DefaultRequestedDepth = 1; // Profundidad si el cliente no especifica (raíz + 1 nivel de respuestas)
-    private const int MaxAllowedDepth = 3;       // Máxima profundidad que el backend procesará para evitar abusos.
+    private const int DefaultRequestedDepth = 3; // Profundidad si el cliente no especifica (raíz + 1 nivel de respuestas)
     private const int MaxRepliesToLoadThreshold = 10; // Si un comentario tiene más respuestas que esto, no se cargan sus hijos en este DTO.
 
     public CommentService(IUnitOfWork unitOfWork)
@@ -21,53 +20,42 @@ public class CommentService : ICommentService
 
     public async Task<IEnumerable<CommentWithRepliesDto>> GetCommentsWithRepliesByPostIdAsync(int postId, int? requestDepth = null)
     {
-        var effectiveDepth = Math.Min(requestDepth ?? DefaultRequestedDepth, MaxAllowedDepth);
-        var rootCommentsData = await _unitOfWork.Comments.GetRootCommentsWithReplyCountAsync(postId);
+        var targetDepth = requestDepth ?? DefaultRequestedDepth;
+        var rootComments = await _unitOfWork.Comments.GetRootCommentsAsync(postId);
 
         var resultDtos = new List<CommentWithRepliesDto>();
 
-        foreach (var rootData in rootCommentsData)
+        foreach (var comment in rootComments)
         {
-            var dto = await BuildCommentWithRepliesAsync(rootData.Comment, rootData.ReplyCount, 0, effectiveDepth);
+            var dto = await BuildCommentWithRepliesAsync(comment, 0, targetDepth);
             resultDtos.Add(dto);
         }
 
         return resultDtos;
     }
-    
+
     private async Task<CommentWithRepliesDto> BuildCommentWithRepliesAsync(
         Comment comment,
-        int replyCountForThisComment,
         int currentDepthLevel,
         int targetDepth)
     {
         var dto = comment.Adapt<CommentWithRepliesDto>();
 
-        dto.RepliesCount = replyCountForThisComment;
-
-        if (currentDepthLevel < targetDepth && replyCountForThisComment > 0 && replyCountForThisComment <= MaxRepliesToLoadThreshold)
+        if (currentDepthLevel < targetDepth && comment.ReplyCount > 0 && comment.ReplyCount <= MaxRepliesToLoadThreshold)
         {
-            var repliesData = await _unitOfWork.Comments.GetRepliesWithReplyCountAsync(comment.Id);
+            var replies = await _unitOfWork.Comments.GetRepliesAsync(comment.Id);
             
-            foreach (var replyData in repliesData) // repliesData ya está ordenado por CreatedAt en el repositorio
+            foreach (var reply in replies) // repliesData ya está ordenado por CreatedAt en el repositorio
             {
-                var replyDto = await BuildCommentWithRepliesAsync(replyData.Comment, replyData.ReplyCount, currentDepthLevel + 1, targetDepth);
+                var replyDto = await BuildCommentWithRepliesAsync(
+                    reply,
+                    currentDepthLevel + 1, 
+                    targetDepth
+                );
                 dto.Replies.Add(replyDto); // Add individual DTO a la lista
             }
         }
         
         return dto;
-
-        // if (currentDepthLevel >= targetDepth || replyCountForThisComment <= 0 || replyCountForThisComment > MaxRepliesToLoadThreshold)
-        //     return dto;
-        //
-        // var repliesData = await _unitOfWork.Comments.GetRepliesWithReplyCountAsync(comment.Id);
-        //
-        // foreach (var replyData in repliesData)
-        // {
-        //     var replyDto = await BuildCommentWithRepliesAsync(replyData.Comment, replyData.ReplyCount,
-        //         currentDepthLevel + 1, targetDepth);
-        //     dto.Replies.Add(replyDto);
-        // }
     }
 }
