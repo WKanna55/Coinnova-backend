@@ -7,6 +7,7 @@ using Coinnova.Domain.Interfaces.Base;
 using Coinnova.Infrastructure.Context;
 using Coinnova.Infrastructure.Repositories;
 using Coinnova.Infrastructure.Repositories.Base;
+using Coinnova.Infrastructure.Services;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -23,7 +24,7 @@ builder.Services.AddControllers();
 Env.Load();
 
 // Ahora accedemos a las variables de entorno
-var DATABASE_URL = Environment.GetEnvironmentVariable("DATABASE_URL");
+var DATABASE_URL = Environment.GetEnvironmentVariable("DATABASE_DBCONTEXT");
 
 // Conexion con la bd
 builder.Services.AddDbContext<ApplicationDbContext>(options => 
@@ -56,6 +57,7 @@ builder.Services.AddScoped<ICommunityRepository, CommunityRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IEventRepository, EventRepository>();
+builder.Services.AddScoped<IInstitutionRepository, InstitutionRepository>();
 
 // Servicios
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -65,6 +67,7 @@ builder.Services.AddScoped<ICommunityService, CommunityService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
 
 // -------------------------------- app construida --------------------------------
 var app = builder.Build();

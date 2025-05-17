@@ -1,5 +1,4 @@
 using System.Collections;
-using Coinnova.Application.Interfaces;
 using Coinnova.Domain.Interfaces;
 using Coinnova.Domain.Interfaces.Base;
 using Coinnova.Infrastructure.Context;
@@ -18,10 +17,12 @@ public class UnitOfWork : IUnitOfWork
     public ICommentRepository Comments { get; }
     public ICategoryRepository Categories { get; }
     public IEventRepository Events { get; }
-    
+
+    public IInstitutionRepository Institutions { get; }
+
     public UnitOfWork(ApplicationDbContext context, IUserRepository usersRepository,
         IPostRepository postRepository, ICommunityRepository communityRepository, ICommentRepository commentsRepository,
-        ICategoryRepository categoryRepository, IEventRepository events)
+        ICategoryRepository categoryRepository, IEventRepository events, IInstitutionRepository institutions)
     {
         _context = context;
         _repositories = new Hashtable();
@@ -31,7 +32,7 @@ public class UnitOfWork : IUnitOfWork
         Events = events;
         Posts = postRepository;
         Communities = communityRepository;
-        Comments = commentsRepository;
+        Institutions = institutions;
     }
 
     public Task<int> Complete()
