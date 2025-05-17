@@ -1,6 +1,8 @@
+using Coinnova.Application.Interfaces;
+
 namespace Coinnova.Application.Services;
 
-public class ChatService
+public class ChatService : IChatService
 {
     
 }

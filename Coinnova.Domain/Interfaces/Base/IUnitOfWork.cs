@@ -12,4 +12,5 @@ public interface IUnitOfWork : IDisposable
     IPostRepository Posts { get; }
     ICommentRepository Comments { get; }
     IEventRepository Events { get; }
+    IInstitutionRepository Institutions { get; }
 }

@@ -41,5 +41,12 @@ public class UserRepository : Repository<User>, IUserRepository
         
         return members;
     }
+
+    public async Task<User?> GetWithRoleByEmail(string email)
+    {
+        return await _context.User
+            .Include(u => u.IdRoleNavigation)
+            .FirstOrDefaultAsync(u => u.Email == email);
+    }
     
 }

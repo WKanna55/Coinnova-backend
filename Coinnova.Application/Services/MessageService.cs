@@ -1,6 +1,8 @@
+using Coinnova.Application.Interfaces;
+
 namespace Coinnova.Application.Services;
 
-public class MessageService
+public class MessageService : IMessageService
 {
     
 }

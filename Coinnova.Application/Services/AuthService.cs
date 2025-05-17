@@ -1,11 +1,13 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using Coinnova.Application.Dtos.Auth;
 using Coinnova.Application.Interfaces;
 using Coinnova.Domain.Entities;
 using Coinnova.Domain.Interfaces.Base;
 using Mapster;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -25,18 +27,19 @@ public class AuthService : IAuthService
     public async Task<LoginResponseDto> Login(LoginRequestDto loginDto)
     {
         var user = await _unitOfWork.Users.GetByEmail(loginDto.Email);
-        if (user == null)
-            return null!;
+        if (user == null) return null;
+
+        if (user.AuthProvider != "Local") return null;
 
         var passwordInDb = user.Password;
         var isHashedPassword = passwordInDb.StartsWith("$2");
 
-        if (isHashedPassword && !BCrypt.Net.BCrypt.Verify(loginDto.Password, passwordInDb))
-            return null;
+        var isPasswordValid = isHashedPassword
+            ? BCrypt.Net.BCrypt.Verify(loginDto.Password, passwordInDb)
+            : loginDto.Password == passwordInDb;
 
-        if (!isHashedPassword && loginDto.Password != passwordInDb)
-            return null;
-
+        if (!isPasswordValid) return null;
+        
         if (!isHashedPassword)
         {
             user.Password = BCrypt.Net.BCrypt.HashPassword(loginDto.Password);
@@ -70,28 +73,30 @@ public class AuthService : IAuthService
     {
         var googleUser = await _googleAuthService.ValidateIdTokenAsync(idToken);
         
-        if (googleUser == null)
-        {
-            return null;
-        }
+        if (googleUser == null) return null;
 
         var user = await _unitOfWork.Users.GetByEmail(googleUser.Email);
         
         if (user == null)
         {
+            var dominio = googleUser.Email.Split('@')[1];
+            var institution = await _unitOfWork.Institutions.GetByDomainAsync(dominio);
+            
             user = new User
             {
                 Name = googleUser.Name,
                 Email = googleUser.Email,
                 Password = "oauth",
                 Imageurl = googleUser.Picture,
-                Createdat = DateTime.UtcNow,
-                IdRole = 2
+                IdRole = 2,
+                IdInstitution = institution?.Id,
+                AuthProvider = "Google"
             };
 
             await _unitOfWork.Users.Add(user);
             await _unitOfWork.Complete();
         }
+        user = await _unitOfWork.Users.GetWithRoleByEmail(googleUser.Email);
 
         var token = GenerateJwtToken(user);
 
