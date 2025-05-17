@@ -106,6 +106,9 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.Likes)
                 .HasDefaultValue(0)
                 .HasColumnName("likes");
+            entity.Property(e => e.ReplyCount)
+                .HasDefaultValue(0)
+                .HasColumnName("reply_count");
             entity.Property(e => e.Updatedat)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("timestamp without time zone")
@@ -371,6 +374,9 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.Likes)
                 .HasDefaultValue(0)
                 .HasColumnName("likes");
+            entity.Property(e => e.CommentCount)
+                .HasDefaultValue(0)
+                .HasColumnName("comment_count");
             entity.Property(e => e.Textcontent).HasColumnName("textcontent");
             entity.Property(e => e.Title)
                 .HasMaxLength(255)

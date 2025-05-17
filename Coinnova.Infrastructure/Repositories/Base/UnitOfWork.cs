@@ -33,6 +33,7 @@ public class UnitOfWork : IUnitOfWork
         Posts = postRepository;
         Communities = communityRepository;
         Institutions = institutions;
+        Comments = commentsRepository;
     }
 
     public Task<int> Complete()

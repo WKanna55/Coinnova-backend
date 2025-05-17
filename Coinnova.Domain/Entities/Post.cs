@@ -32,6 +32,5 @@ public partial class Post
 
     public virtual User IdUserNavigation { get; set; } = null!;
 
-    [NotMapped]
-    public int CommentCount { get; set; }
+    public int CommentCount { get; set; } = 0;
 }
