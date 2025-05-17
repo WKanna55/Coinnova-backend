@@ -17,9 +17,9 @@ public class PostService : IPostService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<PagedResponseDto<PostsForUserIdResponseDto>> GetPostsForUserId(int id, int skip, int take)
+    public async Task<PagedResponseDto<PostsForUserIdResponseDto>> GetPostsForUserFeedById(int userId, int skip, int take)
     {
-        var query = await _unitOfWork.Posts.GetCommunitiesPostsForUserId(id);
+        var query = await _unitOfWork.Posts.QueryPostsForUser(userId);
 
         var totalPosts = await query.CountAsync();
 
@@ -58,5 +58,26 @@ public class PostService : IPostService
         }
         
         return post.Adapt<BasePostDto>();
+    }
+    
+    public async Task<PagedResponseDto<PostsForCommunityDto>> GetPostsByCommunityId(int id, int skip, int take)
+    {
+        var query = await _unitOfWork.Posts.GetPostsByCommunityId(id);
+        var totalPosts = await query.CountAsync();
+        
+        var posts = await query
+            .Skip(skip)
+            .Take(take)
+            .ProjectToType<PostsForCommunityDto>()
+            .ToListAsync();
+        
+        var hasMore = totalPosts > (skip + take);
+
+        return new PagedResponseDto<PostsForCommunityDto>
+        {
+            Items = posts,
+            HasMore = hasMore,
+            TotalCount = totalPosts
+        };
     }
 }

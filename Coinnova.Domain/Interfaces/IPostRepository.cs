@@ -7,5 +7,7 @@ public interface IPostRepository : IRepository<Post>
 {
     Task<IOrderedQueryable<Post>> GetCommunitiesPostsForUserId(int id);
     Task<(IEnumerable<Post> Posts, int TotalCount)> GetPostsByUserIdAsync(int userId, int skip = 0, int take = 10);
+    Task<IOrderedQueryable<Post>> QueryPostsForUser(int userId);
     Task<Post?> GetPostDetailsByIdAsync(int postId);
+    Task<IOrderedQueryable<Post>> GetPostsByCommunityId(int communityId);
 }
