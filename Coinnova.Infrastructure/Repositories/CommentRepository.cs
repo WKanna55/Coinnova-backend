@@ -15,22 +15,22 @@ public class CommentRepository : Repository<Comment>, ICommentRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<Comment>> GetAllRootCommentsByPostId(int postId)
+    public async Task<IEnumerable<Comment>> GetRootCommentsAsync(int postId)
     {
         return await _context.Comment
             .Where(c => c.IdPost == postId && c.IdParentComment == null)
-            .Include(c => c.IdTypeNavigation)
             .Include(c => c.IdUserNavigation)
+            .Include(c => c.IdTypeNavigation)
             .OrderBy(c => c.Createdat)
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<Comment>> GetAllRepliesByCommentId(int commentId)
+    public async Task<IEnumerable<Comment>> GetRepliesAsync(int parentCommentId)
     {
         return await _context.Comment
-            .Where(c => c.IdParentComment == commentId)
-            .Include(c => c.IdTypeNavigation)
+            .Where(c => c.IdParentComment == parentCommentId)
             .Include(c => c.IdUserNavigation)
+            .Include(c => c.IdTypeNavigation)
             .OrderBy(c => c.Createdat)
             .ToListAsync();
     }

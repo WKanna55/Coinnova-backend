@@ -7,6 +7,7 @@ using Coinnova.Domain.Interfaces.Base;
 using Coinnova.Infrastructure.Context;
 using Coinnova.Infrastructure.Repositories;
 using Coinnova.Infrastructure.Repositories.Base;
+using Coinnova.Infrastructure.Services;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -23,7 +24,7 @@ builder.Services.AddControllers();
 Env.Load();
 
 // Ahora accedemos a las variables de entorno
-var DATABASE_URL = Environment.GetEnvironmentVariable("DATABASE_URL");
+var DATABASE_URL = Environment.GetEnvironmentVariable("DATABASE_DBCONTEXT");
 
 // Conexion con la bd
 builder.Services.AddDbContext<ApplicationDbContext>(options => 
@@ -39,6 +40,16 @@ builder.Services.AddMapster();
 // Inyección de Rate Limiting desde configuración externa
 builder.Services.AddRateLimitConfiguration();
 
+// Agregar política de CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 // ---------------------- inyeccion de repositorios y servicios ----------------------
 // Repositorios
@@ -48,6 +59,8 @@ builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<ICommunityRepository, CommunityRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IEventRepository, EventRepository>();
+builder.Services.AddScoped<IInstitutionRepository, InstitutionRepository>();
 
 // Servicios
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -56,6 +69,8 @@ builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<ICommunityService, CommunityService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
 
 // -------------------------------- app construida --------------------------------
 var app = builder.Build();
@@ -82,6 +97,7 @@ app.UseHttpsRedirection();
 // agregar para que funcione
 app.UseRouting();
 app.UseAuthentication(); // agregado para jwt
+app.UseCors("AllowFrontend");
 app.UseAuthorization();
 // usar rate limit
 app.UseRateLimiter();

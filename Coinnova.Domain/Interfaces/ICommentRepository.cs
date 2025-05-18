@@ -5,6 +5,6 @@ namespace Coinnova.Domain.Interfaces;
 
 public interface ICommentRepository : IRepository<Comment>
 {
-    Task<IEnumerable<Comment>> GetAllRootCommentsByPostId(int postId);
-    Task<IEnumerable<Comment>> GetAllRepliesByCommentId(int commentId);
+    Task<IEnumerable<Comment>> GetRootCommentsAsync(int postId);
+    Task<IEnumerable<Comment>> GetRepliesAsync(int parentCommentId);
 }

@@ -1,10 +1,12 @@
 ﻿using Coinnova.Application.Dtos.Comment;
 using Coinnova.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Coinnova.API.Controllers;
 
 [ApiController]
+[Authorize(Roles = "standard")]
 [Route("api/comment")]
 public class CommentController : ControllerBase
 {
@@ -16,9 +18,9 @@ public class CommentController : ControllerBase
     }
 
     [HttpGet("post/{postId}")]
-    public async Task<IActionResult> GetAllCommentsByPostId(int postId)
+    public async Task<IActionResult> GetAllCommentsByPostId(int postId, [FromQuery] int? depth)
     {
-        var comments = await _commentService.GetCommentsWithRepliesByPostIdAsync(postId);
+        var comments = await _commentService.GetCommentsWithRepliesByPostIdAsync(postId, depth);
         return Ok(comments);
     }
 }

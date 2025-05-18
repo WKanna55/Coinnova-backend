@@ -46,4 +46,10 @@ public class UserService : IUserService
 
         return _mapper.Map<UpdateUserResponseDto>(user);
     }
+
+    public async Task<IEnumerable<UserSimpleDto>> GetFirstCommunityMembers(int communityId)
+    {
+        var users = await _unitOfWork.Users.GetFirstMembersByCommunityId(communityId, 6);
+        return users.Adapt<IEnumerable<UserSimpleDto>>();
+    }
 }

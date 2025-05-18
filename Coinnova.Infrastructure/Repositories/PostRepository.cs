@@ -28,15 +28,36 @@ public class PostRepository : Repository<Post>, IPostRepository
         
         return query;
     } 
-    
-    public async Task<IEnumerable<Post>> GetPostsByUserIdAsync(int userId)
+
+    public async Task<(IEnumerable<Post> Posts, int totalCount)> GetPostsByUserIdAsync(int userId, int skip, int take)
     {
-        return await _context.Post
+        var query = _context.Post
+            .AsNoTracking()
             .Where(p => p.IdUser == userId)
-            .Include(p => p.IdTypeNavigation)
-            .Include(p => p.IdCommunityNavigation)
-            .Include(p => p.Comment)
-            .ToArrayAsync();
+            .OrderByDescending(p => p.Createdat);
+
+        var totalCount = await query.CountAsync();
+
+        var posts = await query
+            .Skip(skip)
+            .Take(take)
+            .Select(p => new Post {
+                Id = p.Id,
+                IdCommunity = p.IdCommunity,
+                Createdat = p.Createdat,
+                Updatedat = p.Updatedat,
+                Title = p.Title,
+                Textcontent = p.Textcontent,
+                Imageurl = p.Imageurl,
+                Likes = p.Likes,
+                CommentCount = p.CommentCount,
+                IdTypeNavigation = p.IdTypeNavigation,
+                IdCommunityNavigation = p.IdCommunityNavigation,
+                IdUserNavigation = p.IdUserNavigation,
+            })
+            .ToListAsync();
+
+        return (posts, totalCount);
     }
 
     public async Task<Post?> GetPostDetailsByIdAsync(int postId)
@@ -46,9 +67,14 @@ public class PostRepository : Repository<Post>, IPostRepository
             .Include(p => p.IdUserNavigation)
             .Include(p => p.IdTypeNavigation)
             .Include(p => p.Comment)
-                .ThenInclude(c => c.IdUserNavigation)
-            .Include(p => p.Comment)
-                .ThenInclude(c => c.InverseIdParentCommentNavigation)
             .FirstOrDefaultAsync(p => p.Id == postId);
+    }
+
+    public async Task<IOrderedQueryable<Post>> GetPostsByCommunityId(int communityId)
+    {
+        var query = _context.Post
+            .Where(p => p.IdCommunity == communityId)
+            .OrderByDescending(p => p.Createdat);
+        return await Task.FromResult(query);
     }
 } 

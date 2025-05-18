@@ -5,7 +5,8 @@ namespace Coinnova.Domain.Interfaces;
 
 public interface IPostRepository : IRepository<Post>
 {
+    Task<(IEnumerable<Post> Posts, int totalCount)> GetPostsByUserIdAsync(int userId, int skip, int take);
     Task<IOrderedQueryable<Post>> QueryPostsForUser(int userId);
-    Task<IEnumerable<Post>> GetPostsByUserIdAsync(int userId);
     Task<Post?> GetPostDetailsByIdAsync(int postId);
+    Task<IOrderedQueryable<Post>> GetPostsByCommunityId(int communityId);
 }

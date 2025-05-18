@@ -20,6 +20,8 @@ public partial class Comment
 
     public int? IdParentComment { get; set; }
 
+    public int ReplyCount { get; set; } = 0;
+
     public virtual Comment? IdParentCommentNavigation { get; set; }
 
     public virtual Post IdPostNavigation { get; set; } = null!;

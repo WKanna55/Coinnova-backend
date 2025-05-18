@@ -1,4 +1,6 @@
-﻿namespace Coinnova.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Coinnova.Domain.Entities;
 
 public partial class Post
 {
@@ -29,4 +31,6 @@ public partial class Post
     public virtual PostType IdTypeNavigation { get; set; } = null!;
 
     public virtual User IdUserNavigation { get; set; } = null!;
+
+    public int CommentCount { get; set; } = 0;
 }

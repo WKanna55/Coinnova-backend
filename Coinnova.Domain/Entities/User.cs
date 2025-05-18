@@ -19,7 +19,7 @@ public partial class User
     public DateTime? Createdat { get; set; }
 
     public int? IdInstitution { get; set; }
-
+    public string AuthProvider { get; set; } = "Local";
     public virtual ICollection<Chat> ChatIdUser1Navigation { get; set; } = new List<Chat>();
 
     public virtual ICollection<Chat> ChatIdUser2Navigation { get; set; } = new List<Chat>();

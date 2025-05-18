@@ -5,9 +5,9 @@ namespace Coinnova.Application.Interfaces;
 
 public interface IPostService
 {
+    Task<PagedResponseDto<BasePostDto>> GetPostsByUserIdAsync(int userId, int skip, int take);
+    Task<BasePostDto> GetPostDetailsById(int postId);
     Task<PagedResponseDto<PostsForUserIdResponseDto>> GetPostsForUserFeedById(int userId, int skip, int take);
-    Task<IEnumerable<BasePostDto>> GetPostsByUserIdAsync(int userId);
-
-    Task<PostDetailsDto> GetPostDetailsById(int postId);
+    Task<PagedResponseDto<PostsForCommunityDto>> GetPostsByCommunityId(int id, int skip, int take);
     // public Task<int> CountPostsByUserIdAsync(int userId);
 }
