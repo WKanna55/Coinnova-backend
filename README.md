@@ -148,3 +148,35 @@ Cuando no se trabaja con entidades, si no con casos de uso(no una simple operaci
 1. Propósito: Controlar la entrada y salida de datos que requieren reglas de negocio, validaciones o lógica adicional.
 2. Usos: Operaciones que van más allá de simplemente interactuar con la base de datos (por ejemplo, autenticación, creación de publicaciones con validaciones, etc.).
 3. Ejemplo: CreatePostRequestDto y CreatePostResponseDto, donde la solicitud puede incluir validaciones adicionales (como la longitud del contenido) y el resultado incluye información como la fecha de creación, un ID generado, etc.
+
+---
+
+## Correcto Uso de Controladores
+
+Tomemos como ejemplo la funcion `GetPostsForUserFeedById`, este toma el id de un usuario para mostrarle los posts segun sus comunidades suscritas. En si lo que se devuelve son Posts pero son para un usuario especifico, ¿En que controlador se deberia poner?.
+
+### ¿Cómo decidir si una acción va en un controlador u otro?
+Usa esta regla:
+
+```
+“¿Qué entidad es el recurso principal que se está manipulando o devolviendo?”
+```
+
+* Si devuelves posts filtrados por usuario/comunidad, el recurso son posts → PostController.
+
+* Si estás actualizando o mostrando datos del usuario, el recurso es usuario → UserController.
+
+## Rutas anidadas y sub-recursos(RESTful)
+
+REST también permite rutas anidadas cuando hay dependencia contextual clara:
+
+* `/users/{id}/posts` → posts del usuario → aún puede ir a PostController si estás devolviendo PostDto.
+
+* `/communities/{id}/posts` → posts de una comunidad.
+
+Pero la acción debería residir **en el controlador del recurso que se devuelve, no el que da contexto.**
+
+## Buenas prácticas extra
+* Cada controlador debe usar un único servicio (caso de uso) (Clean Architecture).
+
+* No mezclar lógica cruzada en los controladores. Por ejemplo, no poner lógica de comunidad en el UserController.

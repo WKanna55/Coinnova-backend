@@ -2,6 +2,7 @@ using Coinnova.Application.Dtos.Auth;
 using Coinnova.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Coinnova.API.Controllers;
 
@@ -17,6 +18,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
+    [EnableRateLimiting("LoginFixedWindow")]
     public async Task<IActionResult> Login([FromBody] LoginRequestDto loginDto)
     {
         if (!ModelState.IsValid) 
@@ -40,10 +42,16 @@ public class AuthController : ControllerBase
         
         return Ok(userDto);
     }
-
-    [Authorize(Roles = "standard")]
+    
     [HttpGet("pruebaAuth")]
     public IActionResult Prueba()
+    {
+        return Ok();
+    }
+    
+    [HttpGet("pruebalimitesp")]
+    [EnableRateLimiting("LoginFixedWindow")]
+    public IActionResult PruebaLogin()
     {
         return Ok();
     }
@@ -58,6 +66,4 @@ public class AuthController : ControllerBase
         return Ok(response);
     }
     
-
-
 }

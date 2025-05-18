@@ -37,6 +37,9 @@ builder.Services.AddSwaggerWithJwt();
 // añadir configuracion de Mapster
 builder.Services.AddMapster();
 
+// Inyección de Rate Limiting desde configuración externa
+builder.Services.AddRateLimitConfiguration();
+
 // Agregar política de CORS
 builder.Services.AddCors(options =>
 {
@@ -89,13 +92,19 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+
+
 // agregar para que funcione
 app.UseRouting();
 app.UseAuthentication(); // agregado para jwt
 app.UseCors("AllowFrontend");
 app.UseAuthorization();
-app.MapControllers(); // para swagger y APIRESTful
+// usar rate limit
+app.UseRateLimiter();
 
+//rate limit global
+//app.MapControllers().RequireRateLimiting("GlobalFixedWindow"); // para swagger y APIRESTful
+app.MapControllers();
 
 // -------------------------------- Correr app --------------------------------
 app.Run();
