@@ -7,4 +7,6 @@ public interface ICommunityRepository: IRepository<Community>
 {
     Task<int> CountCommunityMembersByCommunityId(int id);
     IQueryable<Community> QueryComunityWithMembers();
+    Task<IQueryable<object>> GetQueryCommunitiesByCategoryId(int id);
+    Task<IQueryable<object>> GetQueryCommunitiesWithMembers();
 }
