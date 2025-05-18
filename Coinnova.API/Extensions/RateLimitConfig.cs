@@ -32,20 +32,31 @@ public static class RateLimitConfig
                         cancellationToken: token);
                 }
             };
+            
+            // rate limiter global
+            options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+                RateLimitPartition.GetFixedWindowLimiter(
+                    partitionKey: httpContext.User.Identity?.Name ?? httpContext.Request.Headers.Host.ToString(),
+                    factory: partition => new FixedWindowRateLimiterOptions
+                    {
+                        AutoReplenishment = true,
+                        PermitLimit = globalLimitSettings.PermitLimit,
+                        QueueLimit = globalLimitSettings.QueueLimit,
+                        Window = TimeSpan.FromSeconds(globalLimitSettings.WindowSeconds)
+                    }));
 
-            ConfigureFixedWindowLimiter(options, "GlobalFixedWindow", globalLimitSettings.WindowSeconds,
-                globalLimitSettings.PermitLimit, globalLimitSettings.QueueLimit);
+            //ConfigureFixedWindowLimiter(options, "GlobalFixedWindow", globalLimitSettings.WindowSeconds,
+            //    globalLimitSettings.PermitLimit, globalLimitSettings.QueueLimit);
             ConfigureFixedWindowLimiter(options, "LoginFixedWindow", loginLimitSettings.WindowSeconds,
                 loginLimitSettings.PermitLimit, loginLimitSettings.QueueLimit);
-
-
+            
         });
 
         return services;
     }
     
     /*
-     * Metodo para crear rate limit por parametros 
+     * Metodo para crear rate limit especifico por parametros 
      */
     private static void ConfigureFixedWindowLimiter(RateLimiterOptions options, string policyName, int windowSeconds, int permitLimit, int queueLimit)
     {

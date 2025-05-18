@@ -8,7 +8,6 @@ namespace Coinnova.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[EnableRateLimiting("GlobalFixedWindow")]
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
