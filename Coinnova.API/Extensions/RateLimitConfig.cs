@@ -8,10 +8,15 @@ public static class RateLimitConfig
 {
     public static IServiceCollection AddRateLimitConfiguration(this IServiceCollection services)
     {
-        var rateLimitSettings = new RateLimitSettings();
+        var globalLimitSettings = new RateLimitSettings();
+        globalLimitSettings.SetGlobalLimit();
+
+        var loginLimitSettings = new RateLimitSettings();
+        loginLimitSettings.SetLoginLimit();
 
         services.AddRateLimiter(options =>
         {
+            // habilitar error 429
             options.OnRejected = async (context, token) =>
             {
                 context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
@@ -27,16 +32,29 @@ public static class RateLimitConfig
                         cancellationToken: token);
                 }
             };
-            options.AddFixedWindowLimiter("FixedWindowPolicy", config =>
-            {
-                
-                config.Window = TimeSpan.FromSeconds(rateLimitSettings.WindowSeconds);
-                config.PermitLimit = rateLimitSettings.PermitLimit;
-                config.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-                config.QueueLimit = rateLimitSettings.QueueLimit;
-            });
+
+            ConfigureFixedWindowLimiter(options, "GlobalFixedWindow", globalLimitSettings.WindowSeconds,
+                globalLimitSettings.PermitLimit, globalLimitSettings.QueueLimit);
+            ConfigureFixedWindowLimiter(options, "LoginFixedWindow", loginLimitSettings.WindowSeconds,
+                loginLimitSettings.PermitLimit, loginLimitSettings.QueueLimit);
+
+
         });
 
         return services;
+    }
+    
+    /*
+     * Metodo para crear rate limit por parametros 
+     */
+    private static void ConfigureFixedWindowLimiter(RateLimiterOptions options, string policyName, int windowSeconds, int permitLimit, int queueLimit)
+    {
+        options.AddFixedWindowLimiter(policyName, config =>
+        {
+            config.Window = TimeSpan.FromSeconds(windowSeconds);
+            config.PermitLimit = permitLimit;
+            config.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+            config.QueueLimit = queueLimit;
+        });
     }
 }

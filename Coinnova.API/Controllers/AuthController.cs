@@ -8,6 +8,7 @@ namespace Coinnova.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[EnableRateLimiting("GlobalFixedWindow")]
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
@@ -18,6 +19,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
+    [EnableRateLimiting("LoginFixedWindow")]
     public async Task<IActionResult> Login([FromBody] LoginRequestDto loginDto)
     {
         if (!ModelState.IsValid) 
@@ -32,7 +34,6 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    [EnableRateLimiting("FixedLimiting")]
     public async Task<IActionResult> Register([FromBody] RegisterRequestDto registerDto)
     {
         if (!ModelState.IsValid) 
@@ -42,14 +43,18 @@ public class AuthController : ControllerBase
         
         return Ok(userDto);
     }
-
-    [Authorize(Roles = "standard")]
+    
     [HttpGet("pruebaAuth")]
     public IActionResult Prueba()
     {
         return Ok();
     }
     
-
+    [HttpGet("pruebalimitesp")]
+    [EnableRateLimiting("LoginFixedWindow")]
+    public IActionResult PruebaLogin()
+    {
+        return Ok();
+    }
 
 }

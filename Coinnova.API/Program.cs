@@ -86,8 +86,9 @@ app.UseAuthorization();
 // usar rate limit
 app.UseRateLimiter();
 
-app.MapControllers().RequireRateLimiting("FixedWindowPolicy"); // para swagger y APIRESTful
-
+//rate limit global
+//app.MapControllers().RequireRateLimiting("GlobalFixedWindow"); // para swagger y APIRESTful
+app.MapControllers();
 
 // -------------------------------- Correr app --------------------------------
 app.Run();
