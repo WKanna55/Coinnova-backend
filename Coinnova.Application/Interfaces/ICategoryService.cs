@@ -7,6 +7,4 @@ public interface ICategoryService
 {
     Task<IEnumerable<CategoryResponseDto>> GetCategories();
 
-    Task<PagedResponseDto<CommunityWithMembersDto>> GetCommunitiesByCategoryIdAndCriteria(int id, string criteria,
-        int skip, int take);
 }

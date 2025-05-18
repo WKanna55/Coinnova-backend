@@ -5,5 +5,5 @@ namespace Coinnova.Domain.Interfaces;
 
 public interface ICategoryRepository : IRepository<Category>
 {
-    Task<IQueryable<object>> GetQueryCommunitiesByCategoryId(int id);
+
 }

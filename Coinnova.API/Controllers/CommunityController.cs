@@ -24,4 +24,19 @@ public class CommunityController : ControllerBase
         return Ok(communities);
     }
     
+    [HttpGet("category/{id}")]
+    public async Task<IActionResult> GetCommunitiesByCategoryIdAndCriteria([FromRoute] int id, [FromQuery] string criteria, [FromQuery] int skip, [FromQuery] int take)
+    {
+        var response = await _communityService.GetCommunitiesByCategoryIdAndCriteria(id, criteria, skip, take);
+        return Ok(response);
+    }
+
+    [HttpGet("all-with-members")]
+    public async Task<IActionResult> GetAllCommunitiesWithMembers([FromQuery] int skip,
+        [FromQuery] int take)
+    {
+        var response = await _communityService.GetAllCommunitiesWithMembers(skip, take);
+        return Ok(response);
+    }
+    
 }
