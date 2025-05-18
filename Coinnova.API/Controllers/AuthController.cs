@@ -2,6 +2,7 @@ using Coinnova.Application.Dtos.Auth;
 using Coinnova.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Coinnova.API.Controllers;
 
@@ -31,6 +32,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
+    [EnableRateLimiting("FixedLimiting")]
     public async Task<IActionResult> Register([FromBody] RegisterRequestDto registerDto)
     {
         if (!ModelState.IsValid) 

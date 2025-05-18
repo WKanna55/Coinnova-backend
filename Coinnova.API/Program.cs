@@ -36,6 +36,9 @@ builder.Services.AddSwaggerWithJwt();
 // añadir configuracion de Mapster
 builder.Services.AddMapster();
 
+// Inyección de Rate Limiting desde configuración externa
+builder.Services.AddRateLimitConfiguration();
+
 
 // ---------------------- inyeccion de repositorios y servicios ----------------------
 // Repositorios
@@ -74,11 +77,16 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+
+
 // agregar para que funcione
 app.UseRouting();
 app.UseAuthentication(); // agregado para jwt
 app.UseAuthorization();
-app.MapControllers(); // para swagger y APIRESTful
+// usar rate limit
+app.UseRateLimiter();
+
+app.MapControllers().RequireRateLimiting("FixedWindowPolicy"); // para swagger y APIRESTful
 
 
 // -------------------------------- Correr app --------------------------------
