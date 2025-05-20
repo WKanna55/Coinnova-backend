@@ -10,5 +10,5 @@ public interface ICommunityService
     Task<PagedResponseDto<CommunityWithMembersDto>> GetCommunitiesByCategoryIdAndCriteria(int id, string criteria,
         int skip, int take);
 
-    Task<PagedResponseDto<CommunityWithMembersDto>> GetAllCommunitiesWithMembers(int skip, int take);
+    Task<PagedResponseDto<CommunityWithMembersDto>> GetAllCommunitiesWithMembers(string criteria, int skip, int take);
 }
