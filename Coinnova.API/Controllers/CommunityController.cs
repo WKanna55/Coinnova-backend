@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Coinnova.API.Controllers;
 
 [ApiController]
-[Authorize(Roles = "standard")]
+
 [Route("api/[controller]")]
 public class CommunityController : ControllerBase
 {
@@ -32,10 +32,10 @@ public class CommunityController : ControllerBase
     }
 
     [HttpGet("all-with-members")]
-    public async Task<IActionResult> GetAllCommunitiesWithMembers([FromQuery] int skip,
+    public async Task<IActionResult> GetAllCommunitiesWithMembers([FromQuery] string criteria, [FromQuery] int skip,
         [FromQuery] int take)
     {
-        var response = await _communityService.GetAllCommunitiesWithMembers(skip, take);
+        var response = await _communityService.GetAllCommunitiesWithMembers(criteria,skip, take);
         return Ok(response);
     }
     

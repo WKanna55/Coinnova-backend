@@ -65,12 +65,20 @@ public class CommunityService : ICommunityService
         
     }
 
-    public async Task<PagedResponseDto<CommunityWithMembersDto>> GetAllCommunitiesWithMembers( int skip, int take)
+    public async Task<PagedResponseDto<CommunityWithMembersDto>> GetAllCommunitiesWithMembers(string criteria, int skip, int take)
     {
         var query = await _unitOfWork.Communities.GetQueryCommunitiesWithMembers();
         var communities = query.Adapt<List<CommunityWithMembersDto>>();
         
-        communities = communities.OrderByDescending(c => c.Members).ToList();
+        if (criteria == "popular")
+        {
+            communities = communities.OrderByDescending(c => c.Members).ToList();
+        }
+
+        else if (criteria == "new")
+        {
+            communities = communities.OrderByDescending(c => c.CreatedAt).ToList();
+        }
             
         var totalCommunities = communities.Count;
         
