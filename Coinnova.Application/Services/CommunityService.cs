@@ -11,6 +11,7 @@ namespace Coinnova.Application.Services;
 public class CommunityService : ICommunityService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private const int MaxCommunitiesToTakeByCategory = 12;
 
     public CommunityService(IUnitOfWork unitOfWork)
     {
@@ -28,70 +29,28 @@ public class CommunityService : ICommunityService
         {
             Id = c.Id,
             Name = c.Name,
-            NumberOfMembers = c.CommunityMember.Count()
+            MemberCount = c.CommunityMember.Count()
         }).Take(5).ToListAsync();
 
         return communities;
 
     }
     
-    public async Task<PagedResponseDto<CommunityWithMembersDto>> GetCommunitiesByCategoryIdAndCriteria(int id, string criteria, int skip, int take)
+    public async Task<IEnumerable<CommunityDto>> Get12CommunitiesByCriteria(string criteria, int? categoryId = null)
     {
-        var query = await _unitOfWork.Communities.GetQueryCommunitiesByCategoryId(id);
-        var communities = query.Adapt<List<CommunityWithMembersDto>>();
+        var query = categoryId.HasValue
+            ? _unitOfWork.Communities.GetQueryCommunitiesByCategoryId(categoryId.Value)
+            : _unitOfWork.Communities.GetQueryCommunities();
 
-        if (criteria == "popular")
+        query = criteria.ToLower() switch
         {
-            communities = communities.OrderByDescending(c => c.Members).ToList();
-        }
-
-        else if (criteria == "new")
-        {
-            communities = communities.OrderByDescending(c => c.CreatedAt).ToList();
-        }
-        
-        var totalCommunities = communities.Count;
-        
-        var paginated = communities.Skip(skip).Take(take).ToList();
-        
-        var hasMore = totalCommunities > (skip + take);
-        
-        return new PagedResponseDto<CommunityWithMembersDto>
-        {
-            Items = paginated,
-            HasMore = hasMore,
-            TotalCount = totalCommunities
+            "popular" => query.OrderByDescending(c => c.MemberCount).Take(MaxCommunitiesToTakeByCategory),
+            "new" => query.OrderByDescending(c => c.Createdat).Take(MaxCommunitiesToTakeByCategory),
+            _ => query.OrderByDescending(c => c.Createdat).Take(MaxCommunitiesToTakeByCategory)
         };
-        
-    }
 
-    public async Task<PagedResponseDto<CommunityWithMembersDto>> GetAllCommunitiesWithMembers(string criteria, int skip, int take)
-    {
-        var query = await _unitOfWork.Communities.GetQueryCommunitiesWithMembers();
-        var communities = query.Adapt<List<CommunityWithMembersDto>>();
-        
-        if (criteria == "popular")
-        {
-            communities = communities.OrderByDescending(c => c.Members).ToList();
-        }
+        var communities = await query.ToListAsync();
 
-        else if (criteria == "new")
-        {
-            communities = communities.OrderByDescending(c => c.CreatedAt).ToList();
-        }
-            
-        var totalCommunities = communities.Count;
-        
-        var paginated = communities.Skip(skip).Take(take).ToList();
-        
-        var hasMore = totalCommunities > (skip + take);
-        
-        return new PagedResponseDto<CommunityWithMembersDto>
-        {
-            Items = paginated,
-            HasMore = hasMore,
-            TotalCount = totalCommunities
-        };
+        return communities.Adapt<IEnumerable<CommunityDto>>();
     }
-    
 }

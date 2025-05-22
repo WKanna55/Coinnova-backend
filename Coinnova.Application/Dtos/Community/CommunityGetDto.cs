@@ -6,5 +6,5 @@ public class CommunityGetDto
 
     public string Name { get; set; } = null!;
     
-    public int NumberOfMembers { get; set; }
+    public int MemberCount { get; set; }
 }

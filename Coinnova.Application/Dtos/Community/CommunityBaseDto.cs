@@ -1,6 +1,6 @@
 ﻿namespace Coinnova.Application.Dtos.Community;
 
-public class CommunitySimpleDto
+public class CommunityBaseDto
 {
     public int Id { get; set; }
     public required string Name { get; set; }

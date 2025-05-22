@@ -1,4 +1,6 @@
-﻿namespace Coinnova.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Coinnova.Domain.Entities;
 
 public partial class Community
 {
@@ -13,6 +15,9 @@ public partial class Community
     public string? Imageurl { get; set; }
 
     public int? IdInstitution { get; set; }
+    
+    [NotMapped]
+    public int MemberCount { get; set; }
 
     public virtual ICollection<CommunityCategory> CommunityCategory { get; set; } = new List<CommunityCategory>();
 
