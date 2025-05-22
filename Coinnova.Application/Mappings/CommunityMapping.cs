@@ -8,23 +8,14 @@ public class CommunityMapping : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {
-        
-        // registrar aca mapeos de entidad a dto
-        
-        /* EJEMPLO: devolver un usuario con su rol (ya no usamos esto, sino tokens)
-        config.NewConfig<User, LoginResponseDto>()
-            .Map(dest => dest.IdUser, src => src.Id)
-            .Map(dest => dest.Name, src => src.Name)
-            .Map(dest => dest.RolName, src => src.IdRoleNavigation!.Name);
-        */
-        
-        config.NewConfig<Community, CommunityGetDto>()
-            .Map(dest => dest.Id, src => src.Id)
-            .Map(dest => dest.Name, src => src.Name)
-            .Map(dest => dest.NumberOfMembers, src => src.CommunityMember.Count);
-        
-        config.NewConfig<Community, CommunitySimpleDto>()
+        config.NewConfig<Community, CommunityBaseDto>()
             .Map(dest => dest.Id, src => src.Id)
             .Map(dest => dest.Name, src => src.Name);
+
+        config.ForType<Community, CommunityDto>()
+            .Map(dest => dest, src => src.Adapt<CommunityBaseDto>())
+            .Map(dest => dest.Description, src => src.Description)
+            .Map(dest => dest.ImageUrl, src => src.Imageurl)
+            .Map(dest => dest.MemberCount, src => src.MemberCount);
     }
 }

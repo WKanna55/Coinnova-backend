@@ -15,7 +15,7 @@ public class BasePostDto
     public required string ImageUrl { get; set; }
     public int CommentCount { get; set; }
     public required UserSimpleDto Author { get; set; }
-    public required CommunitySimpleDto Community { get; set; }
+    public required CommunityBaseDto Community { get; set; }
 }
 
 

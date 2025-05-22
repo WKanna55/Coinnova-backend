@@ -1,4 +1,3 @@
-using Coinnova.Application.Interfaces;
 using Coinnova.Domain.Entities;
 using Coinnova.Domain.Interfaces;
 using Coinnova.Infrastructure.Context;
@@ -30,52 +29,34 @@ public class CommunityRepository : Repository<Community>, ICommunityRepository
         return communities;
     }
 
-    public Task<IQueryable<object>> GetQueryCommunitiesByCategoryId(int id)
+    public IQueryable<Community> GetQueryCommunitiesByCategoryId(int categoryId)
     {
-        var query =  _context.CommunityCategory
-            .Where(cc => cc.IdCategory == id)
-            .Select(cc => cc.IdCommunity)
-            .Distinct()
-            .Join(
-                _context.Community,
-                communityId => communityId,
-                c => c.Id,
-                (communityId, c) => new { Community = c }
-            )
-            .GroupJoin(
-                _context.CommunityMember,
-                c => c.Community.Id,
-                cm => cm.IdCommunity,
-                (c, members) => new 
-                {
-                    Id = c.Community.Id,
-                    Name = c.Community.Name,
-                    Description = c.Community.Description,
-                    ImageUrl = c.Community.Imageurl,
-                    CreatedAt = c.Community.Createdat,
-                    Members = members.Count()
-                });
-
-        return Task.FromResult<IQueryable<object>>(query);
+        return _context.CommunityCategory
+            .AsNoTracking()
+            .Where(cc => cc.IdCategory == categoryId)
+            .Select(cc => new Community
+            {
+                Id = cc.IdCommunityNavigation.Id,
+                Name = cc.IdCommunityNavigation.Name,
+                Description = cc.IdCommunityNavigation.Description,
+                Imageurl = cc.IdCommunityNavigation.Imageurl,
+                Createdat = cc.IdCommunityNavigation.Createdat,
+                MemberCount = cc.IdCommunityNavigation.CommunityMember.Count()
+            });
     }
 
-    public Task<IQueryable<object>> GetQueryCommunitiesWithMembers()
+    public IQueryable<Community> GetQueryCommunities()
     {
-        var query = _context.Community
-            .GroupJoin(
-                _context.CommunityMember,
-                c => c.Id,
-                cm => cm.IdCommunity,
-                (c, members) => new 
-                {
-                    Id = c.Id,
-                    Name = c.Name,
-                    Description = c.Description,
-                    ImageUrl = c.Imageurl,
-                    CreatedAt = c.Createdat,
-                    Members = members.Count()
-                });
-
-        return Task.FromResult<IQueryable<object>>(query);
+        return _context.Community
+            .AsNoTracking()
+            .Select(c => new Community
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Description = c.Description,
+                Imageurl = c.Imageurl,
+                Createdat = c.Createdat,
+                MemberCount = c.CommunityMember.Count()
+            });
     }
 }
