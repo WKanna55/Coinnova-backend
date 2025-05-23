@@ -1,4 +1,5 @@
 using Coinnova.API.Extensions;
+using Coinnova.API.Middlewares;
 using Coinnova.Application.Interfaces;
 using Coinnova.Application.Mappings;
 using Coinnova.Application.Services;
@@ -102,9 +103,13 @@ app.UseAuthorization();
 // usar rate limit
 app.UseRateLimiter();
 
+app.UseGlobalExceptionHandling(); // Excepciones 500 y más
+
 //rate limit global
 //app.MapControllers().RequireRateLimiting("GlobalFixedWindow"); // para swagger y APIRESTful
 app.MapControllers();
+
+app.UseCustomNotFound(); // Rutas no definidas (404)
 
 // -------------------------------- Correr app --------------------------------
 app.Run();

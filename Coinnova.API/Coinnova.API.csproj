@@ -26,8 +26,4 @@
       <ProjectReference Include="..\Coinnova.Infrastructure\Coinnova.Infrastructure.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Middlewares\" />
-    </ItemGroup>
-
 </Project>
