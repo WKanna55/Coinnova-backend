@@ -75,9 +75,6 @@ builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
 // -------------------------------- app construida --------------------------------
 var app = builder.Build();
 
-// Rutas personalizadas
-app.MapGet("/", () => Results.Json(new { message = "Bienvenido a la API de Coinnova" }));
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
