@@ -5,6 +5,7 @@ using Coinnova.Application.Mappings;
 using Coinnova.Application.Services;
 using Coinnova.Domain.Interfaces;
 using Coinnova.Domain.Interfaces.Base;
+using Coinnova.Domain.Interfaces.Common;
 using Coinnova.Infrastructure.Context;
 using Coinnova.Infrastructure.Repositories;
 using Coinnova.Infrastructure.Repositories.Base;
@@ -51,6 +52,9 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod();
     });
 });
+
+// Configuracion de Cloudinary
+builder.Services.AddSingleton<ICloudStorageService, CloudinaryService>();
 
 // ---------------------- inyeccion de repositorios y servicios ----------------------
 // Repositorios
