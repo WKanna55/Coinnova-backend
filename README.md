@@ -1,15 +1,15 @@
 # Proyecto Coinnova - Backend
 
-Este proyecto implementa una arquitectura de **N capas** para mantener una separación clara de responsabilidades y mejorar la escalabilidad y el mantenimiento del sistema.
+Este proyecto implementa una arquitectura **hexagonal** para mantener una separación clara de responsabilidades y mejorar la escalabilidad y el mantenimiento del sistema.
 
-## Estructura de Capas
+## Estructura de Capas Hexagonal
 
 | Capa | Descripción |
 | :--- | :--- |
 | **API** | Capa de presentación. Expone endpoints HTTP a través de los Controllers y Middlewares. |
-| **Application** | Capa de logica de negocio. Orquesta los casos de uso y la lógica de negocio. Define los DTOs y mapeos(Mapster). |
-| **Domain** | Capa de dominio(corazón del sistema - Define qué es el negocio y qué reglas tiene) Define las entidades de negocio puras y los contratos de los repositorios (interfaces). |
-| **Infrastructure** | Implementa el acceso a datos y los repositorios. |
+| **Application** | Capa de logica de negocio. Orquesta los casos de uso y la lógica de negocio. Define los DTOs, mapeos(Mapster). |
+| **Domain** | Capa de dominio(corazón del sistema - Define qué es el negocio y qué reglas tiene) Define las entidades de negocio puras, los contratos de los repositorios (interfaces), Contratos con Servicios Externos. |
+| **Infrastructure** | Implementa el acceso a datos, los repositorios, servicios externos. |
 
 ---
 
@@ -37,6 +37,8 @@ dotnet ef dbcontext scaffold "Host=<your-neon-host.com>;Database=<your_db_name>;
 6. Mapster
 7. AspNetCore.Authentication.JwtBearer
 8. BCrypt.Net-Next
+9. Google.Apis.Auth
+10. CloudinaryDotNet
 ---
 
 ## Convencional commits para github
@@ -180,3 +182,13 @@ Pero la acción debería residir **en el controlador del recurso que se devuelve
 * Cada controlador debe usar un único servicio (caso de uso) (Clean Architecture).
 
 * No mezclar lógica cruzada en los controladores. Por ejemplo, no poner lógica de comunidad en el UserController.
+
+
+## Agregado aun sin categorizar ni posicionar
+
+### Por qué NO usar herencia en dtos
+* Los DTOs representan vistas distintas, no una jerarquía lógica
+* Viola el principio de responsabilidad única (SRP): cada DTO debe ser autónomo y específico para su uso.
+* Complica el uso de AutoMapper o validaciones
+* Difumina la intención del API
+* ✅ Se Prefiere mantener los DTOs separados y específicos.
