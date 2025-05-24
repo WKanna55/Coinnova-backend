@@ -1,9 +1,15 @@
+using Coinnova.Application.Common.Files;
+using Coinnova.Application.Common.Helpers;
 using Coinnova.Application.Dtos.Common;
 using Coinnova.Application.Dtos.Post;
 using Coinnova.Application.Interfaces;
+using Coinnova.Domain.Common.Models;
+using Coinnova.Domain.Entities;
 using Coinnova.Domain.Interfaces;
 using Coinnova.Domain.Interfaces.Base;
+using Coinnova.Domain.Interfaces.Common;
 using Mapster;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace Coinnova.Application.Services;
@@ -11,10 +17,15 @@ namespace Coinnova.Application.Services;
 public class PostService : IPostService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ICloudStorageService _cloudStorage;
+    private readonly FileUploadFactory _fileUploadFactory;
 
-    public PostService(IUnitOfWork unitOfWork)
+    public PostService(IUnitOfWork unitOfWork, ICloudStorageService cloudStorage,
+        FileUploadFactory fileUploadFactory)
     {
         _unitOfWork = unitOfWork;
+        _cloudStorage = cloudStorage;
+        _fileUploadFactory = fileUploadFactory;
     }
 
     public async Task<PagedResponseDto<PostsForUserIdResponseDto>> GetPostsForUserFeedById(int userId, int skip, int take)
@@ -80,4 +91,31 @@ public class PostService : IPostService
             TotalCount = totalPosts
         };
     }
+
+    public async Task<PostDto> CreatePost(PostPostDto postDto)
+    {
+        //var post = postDto.Adapt<Post>();
+
+        var post = new Post
+        {
+            Title = postDto.Title,
+            Textcontent = postDto.Textcontent,
+            IdType = postDto.IdType,
+            IdUser = postDto.IdUser,
+            IdCommunity = postDto.IdCommunity
+        };
+
+        await _unitOfWork.Posts.Add(post);
+        var completeImageFile = await _fileUploadFactory.FromFormFileAsync(postDto.File, CloudinaryFolders.ForPost(post.Id));
+        if (completeImageFile != null)
+        {
+            var imageUrl = await _cloudStorage.UploadImageAsync(completeImageFile);
+            post.Imageurl = imageUrl;
+        }
+        await _unitOfWork.Complete();
+        return post.Adapt<PostDto>();
+    }
+    
+    
+    
 }

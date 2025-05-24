@@ -1,10 +1,12 @@
 using Coinnova.API.Extensions;
 using Coinnova.API.Middlewares;
+using Coinnova.Application.Common.Files;
 using Coinnova.Application.Interfaces;
 using Coinnova.Application.Mappings;
 using Coinnova.Application.Services;
 using Coinnova.Domain.Interfaces;
 using Coinnova.Domain.Interfaces.Base;
+using Coinnova.Domain.Interfaces.Common;
 using Coinnova.Infrastructure.Context;
 using Coinnova.Infrastructure.Repositories;
 using Coinnova.Infrastructure.Repositories.Base;
@@ -52,6 +54,9 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Configuracion de Cloudinary
+builder.Services.AddSingleton<ICloudStorageService, CloudinaryService>();
+
 // ---------------------- inyeccion de repositorios y servicios ----------------------
 // Repositorios
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -72,6 +77,7 @@ builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
+builder.Services.AddScoped<FileUploadFactory>();
 
 // -------------------------------- app construida --------------------------------
 var app = builder.Build();
