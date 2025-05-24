@@ -1,5 +1,6 @@
 using Coinnova.API.Extensions;
 using Coinnova.API.Middlewares;
+using Coinnova.Application.Common.Files;
 using Coinnova.Application.Interfaces;
 using Coinnova.Application.Mappings;
 using Coinnova.Application.Services;
@@ -76,6 +77,7 @@ builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
+builder.Services.AddScoped<FileUploadFactory>();
 
 // -------------------------------- app construida --------------------------------
 var app = builder.Build();

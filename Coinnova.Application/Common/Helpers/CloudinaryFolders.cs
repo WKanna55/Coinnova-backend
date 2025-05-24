@@ -4,7 +4,9 @@ namespace Coinnova.Application.Common.Helpers;
  * ¿Por qué en aca?
  * Aunque está relacionada con un proveedor externo (Cloudinary), no accede directamente
  * a la red ni a la infraestructura, sólo devuelve rutas (strings).
- * 
+ *
+ * ¿Que hace?
+ * Define la estructura de carpetas en cloudinary
  */
 public static class CloudinaryFolders
 {

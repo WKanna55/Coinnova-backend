@@ -1,3 +1,4 @@
+using Coinnova.Application.Dtos.Post;
 using Coinnova.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -43,4 +44,12 @@ public class PostController : ControllerBase
         var posts = await _postService.GetPostsByCommunityId(id, skip, take);
         return Ok(posts);
     }
+
+    [HttpPost]
+    public async Task<IActionResult> CreatePost([FromForm] PostPostDto postDto)
+    {
+        var post = await _postService.CreatePost(postDto);
+        return Ok(post);
+    }
+    
 }

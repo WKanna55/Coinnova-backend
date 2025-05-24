@@ -1,5 +1,8 @@
 namespace Coinnova.Domain.Common.Models;
 
+/*
+ * Dto especial, mas como una configuracion, hecho para la subida de archivos
+ */
 public class FileUpload
 {
     public string FileName { get; set; } = string.Empty;

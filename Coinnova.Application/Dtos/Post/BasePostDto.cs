@@ -3,6 +3,14 @@ using Coinnova.Application.Dtos.User;
 
 namespace Coinnova.Application.Dtos.Post;
 
+/*
+ * No usar más
+ * Usar herencia en este contexto viola el principio de responsabilidad única (SRP):
+ * cada DTO debe ser autónomo y específico para su uso.
+ * Complica el uso de AutoMapper o validaciones
+ * Se prefiere mantener los DTOs separados y específicos.
+ */
+
 public class BasePostDto
 {
     public int Id { get; set; }
