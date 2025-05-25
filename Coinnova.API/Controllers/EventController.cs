@@ -1,3 +1,4 @@
+using Coinnova.Application.Dtos.Event;
 using Coinnova.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,5 +22,15 @@ public class EventController : ControllerBase
     {
         var events = await _eventService.GetTop6EventsForCommunity(communityId);
         return Ok(events);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateEvent([FromForm] CreateEventDto createEventDto)
+    {
+        if (!ModelState.IsValid) 
+            return BadRequest(ModelState);
+        
+        var eventT = await _eventService.CreateEvent(createEventDto);
+        return Ok(eventT);
     }
 }

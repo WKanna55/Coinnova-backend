@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http;
+
 namespace Coinnova.Application.Dtos.Event;
 
 public class CreateEventDto
@@ -10,13 +12,14 @@ public class CreateEventDto
 
     public string Name { get; set; } = null!;
 
-    public string? Imageurl { get; set; }
-
-    public string? Rulesurl { get; set; }
-
     public string? Description { get; set; }
 
     public int? Createdby { get; set; }
 
     public bool VisibilityPrivate { get; set; }
+    
+    public IFormFile? Image { get; set; }  // Importante: esto necesita [FromForm]
+    
+    public IFormFile? File { get; set; }  // Importante: esto necesita [FromForm]
+    
 }
