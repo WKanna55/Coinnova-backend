@@ -106,13 +106,15 @@ public class PostService : IPostService
         };
 
         await _unitOfWork.Posts.Add(post);
+        await _unitOfWork.Complete();
         var completeImageFile = await _fileUploadFactory.FromFormFileAsync(postDto.File, CloudinaryFolders.ForPost(post.Id));
         if (completeImageFile != null)
         {
             var imageUrl = await _cloudStorage.UploadImageAsync(completeImageFile);
             post.Imageurl = imageUrl;
+            await _unitOfWork.Complete();
         }
-        await _unitOfWork.Complete();
+        
         return post.Adapt<PostDto>();
     }
     
