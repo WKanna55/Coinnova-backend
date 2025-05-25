@@ -111,7 +111,7 @@ public class PostService : IPostService
         var uploadImage = new UploadPostImageDto
         {
             PostId = post.Id,
-            File = createPostDto.File
+            File = createPostDto.Image
         };
         
         var uploaded = await UploadPostImage(uploadImage);

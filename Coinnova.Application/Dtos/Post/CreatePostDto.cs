@@ -9,5 +9,5 @@ public class CreatePostDto
     public int IdType { get; set; }
     public int IdUser { get; set; }
     public int IdCommunity { get; set; }
-    public IFormFile? File { get; set; }  // Importante: esto necesita [FromForm]
+    public IFormFile? Image { get; set; }  // Importante: esto necesita [FromForm]
 }
