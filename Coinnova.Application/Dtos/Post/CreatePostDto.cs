@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Coinnova.Application.Dtos.Post;
 
-public class PostPostDto
+public class CreatePostDto
 {
     public string Title { get; set; } = null!;
     public string Textcontent { get; set; } = null!;
