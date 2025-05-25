@@ -45,7 +45,7 @@ public class PostController : ControllerBase
         return Ok(posts);
     }
 
-    [HttpPost]
+    [HttpPost("create")]
     public async Task<IActionResult> CreatePost([FromForm] CreatePostDto createPostDto)
     {
         var post = await _postService.CreatePost(createPostDto);

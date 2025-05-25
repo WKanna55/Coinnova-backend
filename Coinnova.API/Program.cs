@@ -76,6 +76,7 @@ builder.Services.AddScoped<ICommunityService, CommunityService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<IInstitutionService, InstitutionService>();
 builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
 builder.Services.AddScoped<FileUploadFactory>();
 
