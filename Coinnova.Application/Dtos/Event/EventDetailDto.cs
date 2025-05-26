@@ -9,4 +9,6 @@ public class EventDetailDto
     public DateTime InitialDate { get; set; }
     public DateTime EndDate { get; set; }
     public string RulesUrl { get; set; }
+    
+    public string ImageUrl { get; set; }
 }

@@ -36,7 +36,7 @@ public class EventService : IEventService
         return result.Cast<EventPreviewDto>();
     }
 
-    public async Task<EventDetailDto> GetEventDetailAsync(int eventId)
+    public async Task<EventDetailDto?> GetEventDetailAsync(int eventId)
     {
         var ev = await _unitOfWork.Events.GetEventDetailByIdAsync(eventId);
         if (ev == null) return null;
@@ -49,7 +49,8 @@ public class EventService : IEventService
             Description = ev.Description,
             InitialDate = ev.Initialdate,
             EndDate = ev.Enddate,
-            RulesUrl = ev.Rulesurl
+            RulesUrl = ev.Rulesurl,
+            ImageUrl = ev.Imageurl
         };
     }
 

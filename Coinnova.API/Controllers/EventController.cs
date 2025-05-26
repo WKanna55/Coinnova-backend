@@ -29,6 +29,7 @@ public class EventController : ControllerBase
     {
         var eventDetail = await _eventService.GetEventDetailAsync(eventId);
         return Ok(eventDetail);
+    }
 
     [HttpPost]
     public async Task<IActionResult> CreateEvent([FromForm] CreateEventDto createEventDto)
