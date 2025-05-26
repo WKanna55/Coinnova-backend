@@ -45,10 +45,12 @@ public class PostController : ControllerBase
         return Ok(posts);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> CreatePost([FromForm] PostPostDto postDto)
+    [HttpPost("create")]
+    public async Task<IActionResult> CreatePost([FromForm] CreatePostDto createPostDto)
     {
-        var post = await _postService.CreatePost(postDto);
+        if (!ModelState.IsValid) 
+            return BadRequest(ModelState);
+        var post = await _postService.CreatePost(createPostDto);
         return Ok(post);
     }
     

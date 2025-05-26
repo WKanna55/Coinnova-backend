@@ -11,5 +11,6 @@ public interface IPostService
     Task<PagedResponseDto<PostsForUserIdResponseDto>> GetPostsForUserFeedById(int userId, int skip, int take);
     Task<PagedResponseDto<PostsForCommunityDto>> GetPostsByCommunityId(int id, int skip, int take);
     // public Task<int> CountPostsByUserIdAsync(int userId);
-    Task<PostDto> CreatePost(PostPostDto postDto);
+    Task<PostDto> CreatePost(CreatePostDto createPostDto);
+    Task<bool> UploadPostImage(UploadPostImageDto uploadPostImageDto);
 }

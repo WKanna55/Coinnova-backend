@@ -92,30 +92,52 @@ public class PostService : IPostService
         };
     }
 
-    public async Task<PostDto> CreatePost(PostPostDto postDto)
+    public async Task<PostDto> CreatePost(CreatePostDto createPostDto)
     {
         //var post = postDto.Adapt<Post>();
 
         var post = new Post
         {
-            Title = postDto.Title,
-            Textcontent = postDto.Textcontent,
-            IdType = postDto.IdType,
-            IdUser = postDto.IdUser,
-            IdCommunity = postDto.IdCommunity
+            Title = createPostDto.Title,
+            Textcontent = createPostDto.Textcontent,
+            IdType = createPostDto.IdType,
+            IdUser = createPostDto.IdUser,
+            IdCommunity = createPostDto.IdCommunity
         };
 
         await _unitOfWork.Posts.Add(post);
-        var completeImageFile = await _fileUploadFactory.FromFormFileAsync(postDto.File, CloudinaryFolders.ForPost(post.Id));
-        if (completeImageFile != null)
-        {
-            var imageUrl = await _cloudStorage.UploadImageAsync(completeImageFile);
-            post.Imageurl = imageUrl;
-        }
         await _unitOfWork.Complete();
+        
+        var uploadImage = new UploadPostImageDto
+        {
+            PostId = post.Id,
+            File = createPostDto.Image
+        };
+        
+        var uploaded = await UploadPostImage(uploadImage);
+        
         return post.Adapt<PostDto>();
     }
-    
-    
+
+    public async Task<bool> UploadPostImage(UploadPostImageDto uploadPostImageDto)
+    {
+        if (uploadPostImageDto.File == null) 
+            return false;
+        
+        var completeImageFile = await _fileUploadFactory.FromFormFileAsync(uploadPostImageDto.File,
+            CloudinaryFolders.ForPost(uploadPostImageDto.PostId));
+        if (completeImageFile == null) 
+            return false;
+        
+        var post = await _unitOfWork.Posts.GetById(uploadPostImageDto.PostId);
+        
+        if (post == null) 
+            return false;
+        
+        var imageUrl = await _cloudStorage.UploadImageAsync(completeImageFile);
+        post.Imageurl = imageUrl;
+        await _unitOfWork.Complete();
+        return true;
+    }
     
 }
