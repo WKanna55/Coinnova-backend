@@ -17,12 +17,18 @@ public class EventController : ControllerBase
         _eventService = eventService;
     }
 
-    [HttpGet("community/{communityId}/top6")]
-    public async Task<IActionResult> GetTop6EventsForCommunity(int communityId)
+    [HttpGet("community/{communityId}/events")]
+    public async Task<IActionResult> GetEventsForCommunity(int communityId, [FromQuery]int skip, [FromQuery] int? take = null)
     {
-        var events = await _eventService.GetTop6EventsForCommunity(communityId);
+        var events = await _eventService.GetEventsForCommunityAsync(communityId, skip, take);
         return Ok(events);
     }
+
+    [HttpGet("eventDetail/{eventId}")]
+    public async Task<IActionResult> GetEventDetail(int eventId)
+    {
+        var eventDetail = await _eventService.GetEventDetailAsync(eventId);
+        return Ok(eventDetail);
 
     [HttpPost]
     public async Task<IActionResult> CreateEvent([FromForm] CreateEventDto createEventDto)
@@ -32,5 +38,6 @@ public class EventController : ControllerBase
         
         var eventT = await _eventService.CreateEvent(createEventDto);
         return Ok(eventT);
+
     }
 }

@@ -16,7 +16,7 @@ private readonly ApplicationDbContext _context;
         this._context = _context;
     }
 
-    public async Task<IEnumerable<object>> GetTop6EventsForCommunity(int communityId)
+    public async Task<IEnumerable<object>> GetEventsForCommunitySources(int communityId, int skip, int? take = null)
     {
         var categoryIds = await _context.CommunityCategory
             .Where(cc => cc.IdCommunity == communityId)
@@ -39,6 +39,7 @@ private readonly ApplicationDbContext _context;
                 Name = ev.Name,
                 ImageUrl = ev.Imageurl,
                 InitialDate = ev.Initialdate,
+                Place = ev.Place,
                 SourceName = cat.Name
             };
         
@@ -53,16 +54,19 @@ private readonly ApplicationDbContext _context;
                 Name = ev.Name,
                 ImageUrl = ev.Imageurl,
                 InitialDate = ev.Initialdate,
+                Place = ev.Place,
                 SourceName = inst.Name
             };
         
-        // Unión, eliminación de duplicados por ID y top 6 ordenado por fecha
         var result = await categoryEvents
             .Union(institutionEvents)
-            .OrderBy(e => e.InitialDate)
-            .Take(6)
             .ToListAsync();
 
         return result;
+    }
+
+    public async Task<Event?> GetEventDetailByIdAsync(int eventId)
+    {
+        return await _context.Event.FirstOrDefaultAsync(e => e.Id == eventId);
     }
 }

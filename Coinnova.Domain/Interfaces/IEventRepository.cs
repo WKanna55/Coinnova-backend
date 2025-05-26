@@ -5,5 +5,7 @@ namespace Coinnova.Domain.Interfaces;
 
 public interface IEventRepository : IRepository<Event>
 {
-    Task<IEnumerable<object>> GetTop6EventsForCommunity(int communityId);
+    Task<IEnumerable<object>> GetEventsForCommunitySources(int communityId, int skip, int? take = null);
+    Task<Event?> GetEventDetailByIdAsync(int eventId);
+    
 }
