@@ -5,5 +5,6 @@ namespace Coinnova.Application.Interfaces;
 
 public interface IEventService
 {
-    Task<IEnumerable<EventPreviewDto>> GetTop6EventsForCommunity(int communityId);
+    Task<IEnumerable<EventPreviewDto>> GetEventsForCommunityAsync(int communityId, int skip, int? take = null);
+    Task<EventDetailDto> GetEventDetailAsync(int eventId);
 }

@@ -16,9 +16,30 @@ public class EventService : IEventService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<IEnumerable<EventPreviewDto>> GetTop6EventsForCommunity(int communityId)
+    public async Task<IEnumerable<EventPreviewDto>> GetEventsForCommunityAsync(int communityId, int skip, int? take = null)
     {
-        var result = await _unitOfWork.Events.GetTop6EventsForCommunity(communityId);
+        var result = await _unitOfWork.Events.GetEventsForCommunitySources(communityId, skip, take);
+
+        if (skip > 0) result = result.Skip(skip);
+        if (take.HasValue) result = result.Take(take.Value);
+        
         return result.Cast<EventPreviewDto>();
+    }
+
+    public async Task<EventDetailDto> GetEventDetailAsync(int eventId)
+    {
+        var ev = await _unitOfWork.Events.GetEventDetailByIdAsync(eventId);
+        if (ev == null) return null;
+
+        return new EventDetailDto
+        {
+            Id = ev.Id,
+            Name = ev.Name,
+            Place = ev.Place,
+            Description = ev.Description,
+            InitialDate = ev.Initialdate,
+            EndDate = ev.Enddate,
+            RulesUrl = ev.Rulesurl
+        };
     }
 }
