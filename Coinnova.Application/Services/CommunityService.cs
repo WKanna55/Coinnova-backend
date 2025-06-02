@@ -18,22 +18,22 @@ public class CommunityService : ICommunityService
         _unitOfWork = unitOfWork;
     }
     
-    /*
-     * No devuelve bien puesto que no se mapea object a communitygetdto
-     */
     public async Task<List<CommunityGetDto>> Get5PopularCommunities()
     {
         var query = _unitOfWork.Communities.QueryComunityWithMembers();
 
-        var communities = await query.Select(c => new CommunityGetDto
-        {
-            Id = c.Id,
-            Name = c.Name,
-            MemberCount = c.CommunityMember.Count()
-        }).Take(5).ToListAsync();
+        var communities = await query
+            .OrderByDescending(c => c.CommunityMember.Count())
+            .Select(c => new CommunityGetDto
+            {
+                Id = c.Id,
+                Name = c.Name,
+                MemberCount = c.CommunityMember.Count()
+            })
+            .Take(5)
+            .ToListAsync();
 
         return communities;
-
     }
     
     public async Task<IEnumerable<CommunityDto>> Get12CommunitiesByCriteria(string criteria, int? categoryId = null)
