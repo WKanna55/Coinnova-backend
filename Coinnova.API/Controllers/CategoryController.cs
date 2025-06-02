@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Coinnova.API.Controllers;
 
 [ApiController]
-[Authorize(Roles = "standard")]
+[Authorize]
 [Route("api/[controller]")]
 public class CategoryController : ControllerBase
 {
@@ -16,6 +16,12 @@ public class CategoryController : ControllerBase
         _categoryService = categoryService;
     }
     
+    /// <summary>
+    /// Obtiene la lista de todas las categorías disponibles.
+    /// </summary>
+    /// <returns>Una lista de categorías.</returns>
+    /// <response code="200">Lista de categorías obtenida exitosamente.</response>
+    /// <response code="401">Usuario no autorizado. Se requiere autenticación.</response>
     [HttpGet]
     public async Task<IActionResult> GetCategories()
     {

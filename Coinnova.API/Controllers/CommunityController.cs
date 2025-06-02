@@ -16,6 +16,11 @@ public class CommunityController : ControllerBase
         _communityService = communityService;
     }
 
+    /// <summary>
+    /// Obtiene las 5 comunidades más populares (más n. de usuarios).
+    /// </summary>
+    /// <returns>Una lista de las comunidades con mayor popularidad(n. usuarios).</returns>
+    /// <response code="200">Comunidades populares obtenidas exitosamente.</response>
     [HttpGet("populars")]
     public async Task<IActionResult> GetPopular()
     {
