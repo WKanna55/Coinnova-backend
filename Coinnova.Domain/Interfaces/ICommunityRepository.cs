@@ -9,4 +9,5 @@ public interface ICommunityRepository: IRepository<Community>
     IQueryable<Community> QueryComunityWithMembers();
     IQueryable<Community> GetQueryCommunitiesByCategoryId(int categoryId);
     IQueryable<Community> GetQueryCommunities();
+    Task<List<Community>> GetForInstitutions(int institutionId);
 }

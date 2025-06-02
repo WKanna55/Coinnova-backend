@@ -1,6 +1,6 @@
 namespace Coinnova.Application.Dtos.Community;
 
-public class CommunityGetDto
+public class CommunityWithNMembersDto
 {
     public int Id { get; set; }
 

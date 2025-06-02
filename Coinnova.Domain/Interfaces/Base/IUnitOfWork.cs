@@ -11,6 +11,8 @@ public interface IUnitOfWork : IDisposable
     ICommunityRepository Communities { get; }
     IPostRepository Posts { get; }
     ICommentRepository Comments { get; }
-    IEventRepository Events { get; }
-    IInstitutionRepository Institutions { get; }
+    IEventRepository EventRepository { get; }
+    IInstitutionRepository InstitutionRepository { get; }
+    IEventCategoryRepository EventCategories { get; }
+    IInstitutionEventRepository InstitutionEvents { get; }
 }

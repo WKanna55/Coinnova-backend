@@ -15,8 +15,10 @@ public class CreateEventDto
     public string? Description { get; set; }
 
     public int? Createdby { get; set; }
-
-    public bool VisibilityPrivate { get; set; }
+    
+    public List<int>? InstitutionEventsIds { get; set; }
+    
+    public List<int>? EventCategoryIds { get; set; }
     
     public IFormFile? Image { get; set; }  // Importante: esto necesita [FromForm]
     

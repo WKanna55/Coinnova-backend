@@ -18,25 +18,25 @@ public class CommunityService : ICommunityService
         _unitOfWork = unitOfWork;
     }
     
-    /*
-     * No devuelve bien puesto que no se mapea object a communitygetdto
-     */
-    public async Task<List<CommunityGetDto>> Get5PopularCommunities()
+    public async Task<List<CommunityWithNMembersDto>> Get5PopularCommunities()
     {
         var query = _unitOfWork.Communities.QueryComunityWithMembers();
 
-        var communities = await query.Select(c => new CommunityGetDto
-        {
-            Id = c.Id,
-            Name = c.Name,
-            MemberCount = c.CommunityMember.Count()
-        }).Take(5).ToListAsync();
+        var communities = await query
+            .OrderByDescending(c => c.CommunityMember.Count())
+            .Select(c => new CommunityWithNMembersDto
+            {
+                Id = c.Id,
+                Name = c.Name,
+                MemberCount = c.CommunityMember.Count()
+            })
+            .Take(5)
+            .ToListAsync();
 
         return communities;
-
     }
     
-    public async Task<IEnumerable<CommunityDto>> Get12CommunitiesByCriteria(string criteria, int? categoryId = null)
+    public async Task<IEnumerable<CommunityUsingBaseDto>> Get12CommunitiesByCriteria(string criteria, int? categoryId = null)
     {
         var query = categoryId.HasValue
             ? _unitOfWork.Communities.GetQueryCommunitiesByCategoryId(categoryId.Value)
@@ -51,6 +51,13 @@ public class CommunityService : ICommunityService
 
         var communities = await query.ToListAsync();
 
-        return communities.Adapt<IEnumerable<CommunityDto>>();
+        return communities.Adapt<IEnumerable<CommunityUsingBaseDto>>();
     }
+
+    public async Task<List<CommunityDto>> GetByInstitutionId(int institutionId)
+    {
+        var communities = await _unitOfWork.Communities.GetForInstitutions(institutionId);
+        return communities.Adapt<List<CommunityDto>>();
+    }
+    
 }

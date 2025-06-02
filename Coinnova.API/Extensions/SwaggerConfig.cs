@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.OpenApi.Models;
 
 namespace Coinnova.API.Extensions;
@@ -32,6 +33,11 @@ public static class SwaggerConfig
                     new string[] { }
                 }
             });
+            
+            // Para que Swagger lea los comentarios XML
+            var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            c.IncludeXmlComments(xmlPath);
             
         });
 

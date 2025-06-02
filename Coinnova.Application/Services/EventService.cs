@@ -28,7 +28,7 @@ public class EventService : IEventService
 
     public async Task<IEnumerable<EventPreviewDto>> GetEventsForCommunityAsync(int communityId, int skip, int? take = null)
     {
-        var result = await _unitOfWork.Events.GetEventsForCommunitySources(communityId, skip, take);
+        var result = await _unitOfWork.EventRepository.GetEventsForCommunitySources(communityId, skip, take);
 
         if (skip > 0) result = result.Skip(skip);
         if (take.HasValue) result = result.Take(take.Value);
@@ -38,7 +38,7 @@ public class EventService : IEventService
 
     public async Task<EventDetailDto?> GetEventDetailAsync(int eventId)
     {
-        var ev = await _unitOfWork.Events.GetEventDetailByIdAsync(eventId);
+        var ev = await _unitOfWork.EventRepository.GetEventDetailByIdAsync(eventId);
         if (ev == null) return null;
 
         return new EventDetailDto
@@ -56,6 +56,9 @@ public class EventService : IEventService
 
     public async Task<EventDto> CreateEvent(CreateEventDto eventDto)
     {
+
+        int countUsageOfEvent = 0;
+        
         var eventEntity = new Event
         {
             Initialdate = eventDto.Initialdate,
@@ -64,10 +67,10 @@ public class EventService : IEventService
             Name = eventDto.Name,
             Description = eventDto.Description,
             Createdby = eventDto.Createdby,
-            VisibilityPrivate = eventDto.VisibilityPrivate
+            VisibilityPrivate = false
         };
 
-        await _unitOfWork.Events.Add(eventEntity);
+        await _unitOfWork.EventRepository.Add(eventEntity);
         await _unitOfWork.Complete();
 
         // subir imagen seleccionada
@@ -86,6 +89,52 @@ public class EventService : IEventService
         };
         await UploadEventDocument(eventDocumentDto);
         
+        // Logica para ingresar el evento a categorias, instituticiones o ambas
+
+        // si se agrega a una, varias o ninguna categorias
+        if (eventDto.EventCategoryIds != null)
+        {
+            foreach (var categoriesId in eventDto.EventCategoryIds)
+            {
+                var eventCategory = new EventCategory
+                {
+                    IdEvent = eventEntity.Id,
+                    IdCategory = categoriesId
+                };
+
+                await _unitOfWork.EventCategories.Add(eventCategory);
+                await _unitOfWork.Complete();
+
+                countUsageOfEvent += 2;
+            }
+        }
+        
+        // si se agrega a una, varias o ninguna instituciones
+        if (eventDto.InstitutionEventsIds != null)
+        {
+            foreach (var insitutionId in eventDto.InstitutionEventsIds)
+            {
+                var institutionEvent = new InstitutionEvent
+                {
+                    IdEvent = eventEntity.Id,
+                    IdInstitution = insitutionId
+                };
+
+                await _unitOfWork.InstitutionEvents.Add(institutionEvent);
+                await _unitOfWork.Complete();
+
+                countUsageOfEvent += 1;
+            }
+        }
+        
+        // logica para agregar si el evento pertenece solo a una institutcion o no
+        if (countUsageOfEvent == 1)
+        {
+            eventEntity.VisibilityPrivate = true;
+            await _unitOfWork.EventRepository.Update(eventEntity);
+            await _unitOfWork.Complete();
+        }
+        
         return eventEntity.Adapt<EventDto>();
     }
 
@@ -99,7 +148,7 @@ public class EventService : IEventService
         if (completeImageFile == null) 
             return false;
 
-        var eventEntity = await _unitOfWork.Events.GetById(uploadEventImageDto.EventId);
+        var eventEntity = await _unitOfWork.EventRepository.GetById(uploadEventImageDto.EventId);
 
         if (eventEntity == null) 
             return false;
@@ -120,7 +169,7 @@ public class EventService : IEventService
         if (completeDocumentFile == null) 
             return false;
 
-        var eventEntity = await _unitOfWork.Events.GetById(uploadEventDocumentDto.EventId);
+        var eventEntity = await _unitOfWork.EventRepository.GetById(uploadEventDocumentDto.EventId);
 
         if (eventEntity == null) 
             return false;
