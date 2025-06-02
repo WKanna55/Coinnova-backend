@@ -6,6 +6,7 @@ namespace Coinnova.Application.Interfaces;
 
 public interface ICommunityService
 {
-    Task<List<CommunityGetDto>> Get5PopularCommunities();
-    Task<IEnumerable<CommunityDto>> Get12CommunitiesByCriteria(string criteria, int? categoryId = null);
+    Task<List<CommunityWithNMembersDto>> Get5PopularCommunities();
+    Task<IEnumerable<CommunityUsingBaseDto>> Get12CommunitiesByCriteria(string criteria, int? categoryId = null);
+    Task<List<CommunityDto>> GetByInstitutionId(int institutionId);
 }

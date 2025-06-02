@@ -12,7 +12,7 @@ public class CommunityMapping : IRegister
             .Map(dest => dest.Id, src => src.Id)
             .Map(dest => dest.Name, src => src.Name);
 
-        config.ForType<Community, CommunityDto>()
+        config.ForType<Community, CommunityUsingBaseDto>()
             .Map(dest => dest, src => src.Adapt<CommunityBaseDto>())
             .Map(dest => dest.Description, src => src.Description)
             .Map(dest => dest.ImageUrl, src => src.Imageurl)

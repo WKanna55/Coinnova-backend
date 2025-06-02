@@ -59,4 +59,11 @@ public class CommunityRepository : Repository<Community>, ICommunityRepository
                 MemberCount = c.CommunityMember.Count()
             });
     }
+
+    public async Task<List<Community>> GetForInstitutions(int institutionId)
+    {
+        var communities = await _context.Community.Where(c => c.IdInstitution == institutionId).ToListAsync();
+        return communities;
+    }
+    
 }

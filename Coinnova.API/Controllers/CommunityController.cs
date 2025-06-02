@@ -64,11 +64,26 @@ public class CommunityController : ControllerBase
     /// </param>
     /// <returns>Una lista de hasta 12 comunidades de cualquier categoria ordenadas por el criterio especificado.</returns>
     /// <response code="200">Comunidades obtenidas exitosamente.</response>
-    /// <response code="400">Criterio no válido.</response>
     [HttpGet("category")]
     public async Task<IActionResult> GetCommunitiesByCriteria([FromQuery] string criteria)
     {
         var response = await _communityService.Get12CommunitiesByCriteria(criteria);
         return Ok(response);
     }
+
+    /// <summary>
+    /// Obtiene todas las comunidades de una institucion
+    /// </summary>
+    /// <param name="institutionID">
+    /// Id de la institucion
+    /// </param>
+    /// <returns>Una lista de todas las categorias de una institucion</returns>
+    /// <response code="200">Comunidades obtenidas exitosamente.</response>
+    [HttpGet("institution/{institutionId}")]
+    public async Task<IActionResult> GetByInstitutionId([FromRoute] int institutionId)
+    {
+        var communities = await _communityService.GetByInstitutionId(institutionId);
+        return Ok(communities);
+    }
+    
 }
