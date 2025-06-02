@@ -31,6 +31,15 @@ public class EventController : ControllerBase
         return Ok(eventDetail);
     }
 
+    /// <summary>
+    /// Crea un nuevo evento y lo une a instituciones y/o categorias.
+    /// </summary>
+    /// <param name="createEventDto">Datos del evento a crear.</param>
+    /// <returns>El evento creado.</returns>
+    /// <response code="200">Evento creado exitosamente.</response>
+    /// <response code="400">Datos del formulario inválidos.</response>
+    /// <response code="401">No autorizado. El usuario no ha iniciado sesión.</response>
+    /// <response code="403">Prohibido. El usuario no tiene permisos para acceder a este recurso.</response>
     [HttpPost]
     public async Task<IActionResult> CreateEvent([FromForm] CreateEventDto createEventDto)
     {

@@ -29,6 +29,20 @@ public class CommunityController : ControllerBase
         return Ok(communities);
     }
     
+    /// <summary>
+    /// Obtiene hasta 12 comunidades de una categoría específica según el criterio de ordenamiento.
+    /// </summary>
+    /// <param name="categoryId">ID de la categoría a filtrar.</param>
+    /// <param name="criteria">
+    /// Criterio de ordenamiento de las comunidades:
+    /// <list type="bullet">
+    /// <item><term>popular</term><description> Ordena por cantidad de miembros (descendente).</description></item>
+    /// <item><term>new</term><description> Ordena por fecha de creación (más recientes primero).</description></item>
+    /// </list>
+    /// </param>
+    /// <returns>Una lista de hasta 12 comunidades filtradas por categoría y ordenadas por el criterio especificado.</returns>
+    /// <response code="200">Comunidades obtenidas exitosamente.</response>
+    /// <response code="400">Parámetros incorrectos.</response>
     [HttpGet("category/{categoryId}")]
     public async Task<IActionResult> GetCommunitiesByCategoryIdAndCriteria(
         [FromRoute] int categoryId, 
@@ -38,6 +52,19 @@ public class CommunityController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// Obtiene hasta 12 comunidades de cualquier categoria, ordenadas según el criterio especificado.
+    /// </summary>
+    /// <param name="criteria">
+    /// Criterio de ordenamiento de las comunidades:
+    /// <list type="bullet">
+    /// <item><term>popular</term><description> Ordena por cantidad de miembros (descendente).</description></item>
+    /// <item><term>new</term><description> Ordena por fecha de creación (más recientes primero).</description></item>
+    /// </list>
+    /// </param>
+    /// <returns>Una lista de hasta 12 comunidades de cualquier categoria ordenadas por el criterio especificado.</returns>
+    /// <response code="200">Comunidades obtenidas exitosamente.</response>
+    /// <response code="400">Criterio no válido.</response>
     [HttpGet("category")]
     public async Task<IActionResult> GetCommunitiesByCriteria([FromQuery] string criteria)
     {
