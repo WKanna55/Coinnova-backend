@@ -56,6 +56,9 @@ public class EventService : IEventService
 
     public async Task<EventDto> CreateEvent(CreateEventDto eventDto)
     {
+
+        int countUsageOfEvent = 0;
+        
         var eventEntity = new Event
         {
             Initialdate = eventDto.Initialdate,
@@ -64,7 +67,7 @@ public class EventService : IEventService
             Name = eventDto.Name,
             Description = eventDto.Description,
             Createdby = eventDto.Createdby,
-            VisibilityPrivate = eventDto.VisibilityPrivate
+            VisibilityPrivate = false
         };
 
         await _unitOfWork.EventRepository.Add(eventEntity);
@@ -85,6 +88,52 @@ public class EventService : IEventService
             Document = eventDto.File
         };
         await UploadEventDocument(eventDocumentDto);
+        
+        // Logica para ingresar el evento a categorias, instituticiones o ambas
+
+        // si se agrega a una, varias o ninguna categorias
+        if (eventDto.EventCategoryIds != null)
+        {
+            foreach (var categoriesId in eventDto.EventCategoryIds)
+            {
+                var eventCategory = new EventCategory
+                {
+                    IdEvent = eventEntity.Id,
+                    IdCategory = categoriesId
+                };
+
+                await _unitOfWork.EventCategories.Add(eventCategory);
+                await _unitOfWork.Complete();
+
+                countUsageOfEvent += 2;
+            }
+        }
+        
+        // si se agrega a una, varias o ninguna instituciones
+        if (eventDto.InstitutionEventsIds != null)
+        {
+            foreach (var insitutionId in eventDto.InstitutionEventsIds)
+            {
+                var institutionEvent = new InstitutionEvent
+                {
+                    IdEvent = eventEntity.Id,
+                    IdInstitution = insitutionId
+                };
+
+                await _unitOfWork.InstitutionEvents.Add(institutionEvent);
+                await _unitOfWork.Complete();
+
+                countUsageOfEvent += 1;
+            }
+        }
+        
+        // logica para agregar si el evento pertenece solo a una institutcion o no
+        if (countUsageOfEvent == 1)
+        {
+            eventEntity.VisibilityPrivate = true;
+            await _unitOfWork.EventRepository.Update(eventEntity);
+            await _unitOfWork.Complete();
+        }
         
         return eventEntity.Adapt<EventDto>();
     }
