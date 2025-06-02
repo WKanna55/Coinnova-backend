@@ -226,13 +226,9 @@ public partial class ApplicationDbContext : DbContext
                 .HasColumnName("createdat");
             entity.Property(e => e.Createdby).HasColumnName("createdby");
             entity.Property(e => e.Description).HasColumnName("description");
-            entity.Property(e => e.Enddate)
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("enddate");
+            entity.Property(e => e.Enddate).HasColumnName("enddate");
             entity.Property(e => e.Imageurl).HasColumnName("imageurl");
-            entity.Property(e => e.Initialdate)
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("initialdate");
+            entity.Property(e => e.Initialdate).HasColumnName("initialdate");
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
                 .HasColumnName("name");
