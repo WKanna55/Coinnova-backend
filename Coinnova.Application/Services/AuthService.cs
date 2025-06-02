@@ -119,6 +119,7 @@ public class AuthService : IAuthService
         var secretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY")!;
         var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER")!;
         var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE")!;
+        var jwtLifetimeDays = int.Parse(Environment.GetEnvironmentVariable("JWT_LIFETIME_DAYS")!);
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -126,7 +127,7 @@ public class AuthService : IAuthService
             issuer: jwtIssuer,
             audience: jwtAudience,
             claims: claims,
-            expires: DateTime.Now.AddMinutes(60),
+            expires: DateTime.Now.AddDays(jwtLifetimeDays),
             signingCredentials: creds
         );
 
