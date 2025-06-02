@@ -16,7 +16,7 @@ public class InstitutionService : IInstitutionService
 
     public async Task<List<InstitutionSummaryDto>> GetAllInstitutionsSummary()
     {
-        var institutions = await _unitOfWork.Institutions.GetAll();
+        var institutions = await _unitOfWork.InstitutionRepository.GetAll();
          
         return institutions.Adapt<List<InstitutionSummaryDto>>();
     }

@@ -81,7 +81,7 @@ public class AuthService : IAuthService
         if (user == null)
         {
             var dominio = googleUser.Email.Split('@')[1];
-            var institution = await _unitOfWork.Institutions.GetByDomainAsync(dominio);
+            var institution = await _unitOfWork.InstitutionRepository.GetByDomainAsync(dominio);
             
             user = new User
             {

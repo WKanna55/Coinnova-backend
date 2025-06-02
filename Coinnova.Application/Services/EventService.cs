@@ -28,7 +28,7 @@ public class EventService : IEventService
 
     public async Task<IEnumerable<EventPreviewDto>> GetEventsForCommunityAsync(int communityId, int skip, int? take = null)
     {
-        var result = await _unitOfWork.Events.GetEventsForCommunitySources(communityId, skip, take);
+        var result = await _unitOfWork.EventRepository.GetEventsForCommunitySources(communityId, skip, take);
 
         if (skip > 0) result = result.Skip(skip);
         if (take.HasValue) result = result.Take(take.Value);
@@ -38,7 +38,7 @@ public class EventService : IEventService
 
     public async Task<EventDetailDto?> GetEventDetailAsync(int eventId)
     {
-        var ev = await _unitOfWork.Events.GetEventDetailByIdAsync(eventId);
+        var ev = await _unitOfWork.EventRepository.GetEventDetailByIdAsync(eventId);
         if (ev == null) return null;
 
         return new EventDetailDto
@@ -67,7 +67,7 @@ public class EventService : IEventService
             VisibilityPrivate = eventDto.VisibilityPrivate
         };
 
-        await _unitOfWork.Events.Add(eventEntity);
+        await _unitOfWork.EventRepository.Add(eventEntity);
         await _unitOfWork.Complete();
 
         // subir imagen seleccionada
@@ -99,7 +99,7 @@ public class EventService : IEventService
         if (completeImageFile == null) 
             return false;
 
-        var eventEntity = await _unitOfWork.Events.GetById(uploadEventImageDto.EventId);
+        var eventEntity = await _unitOfWork.EventRepository.GetById(uploadEventImageDto.EventId);
 
         if (eventEntity == null) 
             return false;
@@ -120,7 +120,7 @@ public class EventService : IEventService
         if (completeDocumentFile == null) 
             return false;
 
-        var eventEntity = await _unitOfWork.Events.GetById(uploadEventDocumentDto.EventId);
+        var eventEntity = await _unitOfWork.EventRepository.GetById(uploadEventDocumentDto.EventId);
 
         if (eventEntity == null) 
             return false;
