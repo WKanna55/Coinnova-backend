@@ -1,5 +1,6 @@
 using Coinnova.Application.Dtos.Common;
 using Coinnova.Application.Dtos.Post;
+using Coinnova.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 
 namespace Coinnova.Application.Interfaces;
@@ -13,4 +14,5 @@ public interface IPostService
     // public Task<int> CountPostsByUserIdAsync(int userId);
     Task<PostDto> CreatePost(CreatePostDto createPostDto);
     Task<bool> UploadPostImage(UploadPostImageDto uploadPostImageDto);
+    Task<PostsForUserIdResponseDto> LikeApost(int postId);
 }

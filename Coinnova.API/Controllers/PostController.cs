@@ -104,5 +104,15 @@ public class PostController : ControllerBase
         var post = await _postService.CreatePost(createPostDto);
         return Ok(post);
     }
+
+    [HttpPost("post/{id}/like")]
+    public async Task<IActionResult> LikeAPost([FromRoute] int id)
+    {
+        var post = await _postService.LikeApost(id);
+        if (post == null) return NotFound();
+
+        return Ok(new { post.Id, post.Likes });
+    }
+    
     
 }
