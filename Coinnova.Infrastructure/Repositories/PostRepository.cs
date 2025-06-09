@@ -77,4 +77,14 @@ public class PostRepository : Repository<Post>, IPostRepository
             .OrderByDescending(p => p.Createdat);
         return await Task.FromResult(query);
     }
+
+    public async Task<Post?> LikePostById(int postId)
+    {
+        var post = await _context.Post.FindAsync(postId);
+        if (post == null) return null;
+
+        post.Likes = (post.Likes ?? 0) + 1;
+        return post;
+    }
+    
 } 

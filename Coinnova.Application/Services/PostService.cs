@@ -139,5 +139,13 @@ public class PostService : IPostService
         await _unitOfWork.Complete();
         return true;
     }
+
+    public async Task<PostsForUserIdResponseDto> LikeApost(int postId)
+    {
+        var updated = await _unitOfWork.Posts.LikePostById(postId);
+        if (updated == null) return null;
+        await _unitOfWork.Complete();
+        return updated.Adapt<PostsForUserIdResponseDto>();
+    }
     
 }
