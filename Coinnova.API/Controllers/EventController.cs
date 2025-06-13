@@ -24,7 +24,7 @@ public class EventController : ControllerBase
         return Ok(events);
     }
 
-    [HttpGet("eventDetail/{eventId}")]
+    [HttpGet("{eventId}")]
     public async Task<IActionResult> GetEventDetail(int eventId)
     {
         var eventDetail = await _eventService.GetEventDetailAsync(eventId);
