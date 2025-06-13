@@ -6,4 +6,5 @@ namespace Coinnova.Application.Interfaces;
 public interface ICommentService
 {
     Task<IEnumerable<CommentWithRepliesDto>> GetCommentsWithRepliesByPostIdAsync(int postId, int? requestDepth = null);
+    Task<Comment> CreateComment(CreateCommentDto createCommentDto);
 }
