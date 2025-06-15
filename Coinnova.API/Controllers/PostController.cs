@@ -105,7 +105,7 @@ public class PostController : ControllerBase
         return Ok(post);
     }
 
-    [HttpPost("post/{id}/like")]
+    [HttpPost("{id}/like")]
     public async Task<IActionResult> LikeAPost([FromRoute] int id)
     {
         var post = await _postService.LikeApost(id);
@@ -113,6 +113,4 @@ public class PostController : ControllerBase
 
         return Ok(new { post.Id, post.Likes });
     }
-    
-    
 }
