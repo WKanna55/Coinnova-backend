@@ -66,7 +66,7 @@ public class CommunityRepository : Repository<Community>, ICommunityRepository
         return communities;
     }
 
-    public async Task<IList<int>> GetIdsForSuscribedUserCateogory(int userId)
+    public async Task<IList<int>> GetIdsForSuscribedUserGeneral(int userId)
     {
         var communityIds = await _context.CommunityMember
             .Where(cm => cm.IdUser == userId)
