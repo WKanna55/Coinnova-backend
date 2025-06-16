@@ -19,6 +19,6 @@ public interface IPostService
     Task<bool> UploadPostImage(UploadPostImageDto uploadPostImageDto);
     Task<PostsForUserIdResponseDto> LikeApost(int postId);
 
-    Task<PagedResponseDto<PostsForUserIdResponseDto>> GetAllForUserFeedById(int userId, int skip, int take);
+    Task<PagedResponseDto<BasePostDto>> GetAllForUserFeedById(int userId, int skip, int take);
     Task<PagedResponseDto<PostsForUserIdResponseDto>> GetInstitutionForUserFeedById(int userId, int skip, int take);
 }

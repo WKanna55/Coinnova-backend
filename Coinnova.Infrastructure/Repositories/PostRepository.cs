@@ -39,7 +39,11 @@ public class PostRepository : Repository<Post>, IPostRepository
     public async Task<IEnumerable<Post>> GetForCommunityIds(IList<int> communityIds, int skip, int take)
     {
         var posts = await _context.Post.Where(p => 
-                communityIds.Contains(p.IdCommunity)).OrderByDescending(p => p.Createdat)
+                communityIds.Contains(p.IdCommunity))
+            .Include(p => p.IdCommunityNavigation)
+            .Include(p => p.IdTypeNavigation)
+            .Include(p => p.IdUserNavigation)
+            .OrderByDescending(p => p.Createdat)
             .Skip(skip).Take(take).ToListAsync();
 
         return posts;

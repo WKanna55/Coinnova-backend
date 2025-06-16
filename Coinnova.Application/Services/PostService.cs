@@ -49,15 +49,15 @@ public class PostService : IPostService
         };
     }
 
-    public async Task<PagedResponseDto<PostsForUserIdResponseDto>> GetAllForUserFeedById(int userId, int skip, int take)
+    public async Task<PagedResponseDto<BasePostDto>> GetAllForUserFeedById(int userId, int skip, int take)
     {
         var suscribedUsercommunitiesIds = await _unitOfWork.Communities.GetIdsForSuscribedUserGeneral(userId);
         var posts = await _unitOfWork.Posts.GetForCommunityIds(suscribedUsercommunitiesIds, skip, take);
         var totalPosts = await _unitOfWork.Posts.CountPostsAsync(suscribedUsercommunitiesIds);
         var hasMore = totalPosts > (skip + take);
-        return new PagedResponseDto<PostsForUserIdResponseDto>
+        return new PagedResponseDto<BasePostDto>
         {
-            Items = posts.Adapt<IEnumerable<PostsForUserIdResponseDto>>(),
+            Items = posts.Adapt<IEnumerable<BasePostDto>>(),
             HasMore = hasMore,
             TotalCount = totalPosts
         };
