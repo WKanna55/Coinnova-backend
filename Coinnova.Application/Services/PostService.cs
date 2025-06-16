@@ -45,6 +45,21 @@ public class PostService : IPostService
             TotalCount = totalPosts
         };
     }
+
+    public async Task<PagedResponseDto<PostsForUserIdResponseDto>> GetAllForUserFeedById(int userId, int skip, int take)
+    {
+        var suscribedUsercommunitiesIds = await _unitOfWork.Communities.GetIdsForSuscribedUserCateogory(userId);
+        var posts = await _unitOfWork.Posts.GetForCommunityIds(suscribedUsercommunitiesIds, skip, take);
+        var totalPosts = await _unitOfWork.Posts.CountPostsAsync(suscribedUsercommunitiesIds);
+        var hasMore = totalPosts > (skip + take);
+        return new PagedResponseDto<PostsForUserIdResponseDto>
+        {
+            Items = posts.Adapt<IEnumerable<PostsForUserIdResponseDto>>(),
+            HasMore = hasMore,
+            TotalCount = totalPosts
+        };
+    }
+    
     
     public async Task<PagedResponseDto<BasePostDto>> GetPostsByUserIdAsync(int userId, int skip = 0, int take = 10)
     {
