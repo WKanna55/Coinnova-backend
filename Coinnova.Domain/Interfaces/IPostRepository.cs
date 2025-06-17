@@ -10,4 +10,6 @@ public interface IPostRepository : IRepository<Post>
     Task<Post?> GetPostDetailsByIdAsync(int postId);
     Task<IOrderedQueryable<Post>> GetPostsByCommunityId(int communityId);
     Task<Post?> LikePostById(int postId);
+    Task<IEnumerable<Post>> GetForCommunityIds(IList<int> communityIds, int skip, int take);
+    Task<int> CountPostsAsync(IList<int> communityIds);
 }

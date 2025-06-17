@@ -58,4 +58,24 @@ public class CommentService : ICommentService
         
         return dto;
     }
+
+    public async Task<Comment> CreateComment(CreateCommentDto createCommentDto)
+    {
+        createCommentDto.IdParentComment = createCommentDto.IdParentComment > 0 ? createCommentDto.IdParentComment : null;
+        if (createCommentDto.IdParentComment.HasValue) createCommentDto.IdType = null;
+        
+        var newComment = new Comment
+        {
+            Content = createCommentDto.Content,
+            IdType = createCommentDto.IdType,
+            IdUser = createCommentDto.IdUser,
+            IdPost = createCommentDto.IdPost,
+            IdParentComment = createCommentDto.IdParentComment
+        };
+        
+        await _unitOfWork.Repository<Comment>().Add(newComment);
+        await _unitOfWork.Complete();
+        
+        return newComment;
+    }
 }
