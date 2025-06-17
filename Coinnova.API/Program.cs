@@ -47,7 +47,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("https://coinnova-ts.vercel.app/")
+        policy.WithOrigins("https://coinnova-ts.vercel.app")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
