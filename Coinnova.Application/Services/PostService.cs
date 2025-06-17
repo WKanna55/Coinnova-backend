@@ -28,6 +28,9 @@ public class PostService : IPostService
         _fileUploadFactory = fileUploadFactory;
     }
 
+    /*
+     * Ya no usar, arreglado con otras funcioones de este service
+     */
     public async Task<PagedResponseDto<PostsForUserIdResponseDto>> GetPostsForUserFeedById(int userId, int skip, int take)
     {
         var query = await _unitOfWork.Posts.QueryPostsForUser(userId);
@@ -41,6 +44,34 @@ public class PostService : IPostService
         return new PagedResponseDto<PostsForUserIdResponseDto>
         {
             Items = posts,
+            HasMore = hasMore,
+            TotalCount = totalPosts
+        };
+    }
+
+    public async Task<PagedResponseDto<BasePostDto>> GetAllForUserFeedById(int userId, int skip, int take)
+    {
+        var suscribedUsercommunitiesIds = await _unitOfWork.Communities.GetIdsForSuscribedUserGeneral(userId);
+        var posts = await _unitOfWork.Posts.GetForCommunityIds(suscribedUsercommunitiesIds, skip, take);
+        var totalPosts = await _unitOfWork.Posts.CountPostsAsync(suscribedUsercommunitiesIds);
+        var hasMore = totalPosts > (skip + take);
+        return new PagedResponseDto<BasePostDto>
+        {
+            Items = posts.Adapt<IEnumerable<BasePostDto>>(),
+            HasMore = hasMore,
+            TotalCount = totalPosts
+        };
+    }
+    
+    public async Task<PagedResponseDto<PostsForUserIdResponseDto>> GetInstitutionForUserFeedById(int userId, int skip, int take)
+    {
+        var suscribedUserInstitutioncommunitiesIds = await _unitOfWork.Communities.GetIdsForSuscribedUserInstitution(userId);
+        var posts = await _unitOfWork.Posts.GetForCommunityIds(suscribedUserInstitutioncommunitiesIds, skip, take);
+        var totalPosts = await _unitOfWork.Posts.CountPostsAsync(suscribedUserInstitutioncommunitiesIds);
+        var hasMore = totalPosts > (skip + take);
+        return new PagedResponseDto<PostsForUserIdResponseDto>
+        {
+            Items = posts.Adapt<IEnumerable<PostsForUserIdResponseDto>>(),
             HasMore = hasMore,
             TotalCount = totalPosts
         };

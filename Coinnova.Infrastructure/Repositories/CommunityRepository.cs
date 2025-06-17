@@ -65,5 +65,23 @@ public class CommunityRepository : Repository<Community>, ICommunityRepository
         var communities = await _context.Community.Where(c => c.IdInstitution == institutionId).ToListAsync();
         return communities;
     }
+
+    public async Task<IList<int>> GetIdsForSuscribedUserGeneral(int userId)
+    {
+        var communityIds = await _context.CommunityMember
+            .Where(cm => cm.IdUser == userId)
+            .Select(cm => cm.IdCommunity)
+            .ToListAsync();
+        return communityIds;
+    }
+    
+    public async Task<IList<int>> GetIdsForSuscribedUserInstitution( int userId)
+    {
+        var communityIds = await _context.CommunityMember
+            .Where(cm => cm.IdUser == userId && cm.IdCommunityNavigation.IdInstitution != null)
+            .Select(cm => cm.IdCommunity)
+            .ToListAsync();
+        return communityIds;
+    }
     
 }
