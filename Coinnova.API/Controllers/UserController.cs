@@ -82,4 +82,24 @@ public class UserController : ControllerBase
         var members = await _userService.GetFirstCommunityMembers(id);
         return Ok(members);
     }
+    
+    
+    [HttpGet("me")]
+    [Authorize]
+    public async Task<IActionResult> GetMe()
+    {
+        var userIdClaim = User.FindFirst(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub);
+        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+        {
+            return Unauthorized("Token inválido");
+        }
+
+        var userInfo = await _userService.GetLoggedUserInfo(userId);
+        if (userInfo == null)
+        {
+            return NotFound("Usuario no encontrado");
+        }
+        
+        return Ok(userInfo);
+    } 
 }

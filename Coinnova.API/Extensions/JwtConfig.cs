@@ -1,3 +1,5 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using Coinnova.API.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -30,11 +32,14 @@ public static class JwtConfig
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = jwtSettings.Issuer,
                     ValidAudience = jwtSettings.Audience,
-                    IssuerSigningKey = key
+                    IssuerSigningKey = key,
+                    RoleClaimType = ClaimTypes.Role,
+                    NameClaimType = JwtRegisteredClaimNames.Name,
                 };
+
+                options.MapInboundClaims = false; 
             });
         
         return services;
-
     }
 }

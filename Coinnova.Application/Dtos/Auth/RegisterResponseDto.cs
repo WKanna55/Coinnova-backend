@@ -1,8 +1,9 @@
+using Coinnova.Application.Dtos.User;
+
 namespace Coinnova.Application.Dtos.Auth;
 
 public class RegisterResponseDto
 {
-    public int Id { get; set; }
-
-    public string Name { get; set; } = null!;
+    public string Token { get; set; } = null!;
+    public UserDto User { get; set; } = null!;
 }

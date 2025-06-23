@@ -14,8 +14,8 @@ public class UserMapping : IRegister
             .Map(dest => dest.Email, src => src.Email)
             .Map(dest => dest.Biography, src => src.Biography)
             .Map(dest => dest.ImageUrl, src => src.Imageurl)
-            .Map(dest => dest.RoleId, src => src.IdRole)
-            .Map(dest => dest.RoleName, src => src.IdRoleNavigation.Name)
+            .Map(dest => dest.Role, src => src.IdRoleNavigation.Name)
+            .Map(dest => dest.CreatedAt, src => src.Createdat)
             .Map(dest => dest.InstitutionId, src => src.IdInstitution)
             .Map(dest => dest.InstitutionName, src => src.IdInstitutionNavigation.Name);
 

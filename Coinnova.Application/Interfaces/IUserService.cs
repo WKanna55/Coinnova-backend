@@ -9,4 +9,5 @@ public interface IUserService
     Task<UserDto> GetUserInfoById(int id);
     Task<UpdateUserResponseDto> UpdateUserAsync(int userId, UpdateUserRequestDto dto);
     Task<IEnumerable<UserSimpleDto>> GetFirstCommunityMembers(int communityId);
+    Task<UserDto> GetLoggedUserInfo(int userId);
 }

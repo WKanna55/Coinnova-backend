@@ -2,8 +2,7 @@
 
 public class UserDto : BaseUserDto
 {
-    public int RoleId { get; set; }
-    public string? RoleName { get; set; }
+    public string? Role { get; set; }
     public int? InstitutionId { get; set; }
     public string? InstitutionName { get; set; }
 }

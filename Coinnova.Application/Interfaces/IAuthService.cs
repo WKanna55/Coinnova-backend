@@ -1,4 +1,5 @@
 using Coinnova.Application.Dtos.Auth;
+using Coinnova.Application.Dtos.User;
 
 namespace Coinnova.Application.Interfaces;
 

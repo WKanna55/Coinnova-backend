@@ -46,7 +46,16 @@ public class UserRepository : Repository<User>, IUserRepository
     {
         return await _context.User
             .Include(u => u.IdRoleNavigation)
+            .Include(u => u.IdInstitutionNavigation)
             .FirstOrDefaultAsync(u => u.Email == email);
+    }
+
+    public async Task<User?> GetByIdWithRelations(int id)
+    {
+        return await _context.User
+            .Include(u => u.IdRoleNavigation)
+            .Include(u => u.IdInstitutionNavigation)
+            .FirstOrDefaultAsync(u => u.Id == id);
     }
     
 }
