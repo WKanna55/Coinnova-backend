@@ -76,7 +76,7 @@ public class UserController : ControllerBase
     /// <param name="id">ID de la comunidad.</param>
     /// <returns>Lista de miembros de la comunidad.</returns>
     /// <response code="200">Miembros obtenidos exitosamente.</response>
-    [HttpGet("/community/{id}/members")]
+    [HttpGet("community/{id}/members")]
     public async Task<IActionResult> GetFirstMembers([FromRoute] int id)
     {
         var members = await _userService.GetFirstCommunityMembers(id);
