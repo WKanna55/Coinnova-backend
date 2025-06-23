@@ -96,36 +96,7 @@ public class PostRepository : Repository<Post>, IPostRepository
             .Include(p => p.Comment)
             .FirstOrDefaultAsync(p => p.Id == postId);
     }
-
-    public async Task<(IEnumerable<Post> Posts, int totalCount)> GetPostsByCommunityId(int communityId, int skip, int take)
-    {
-        var query = _context.Post
-            .Where(p => p.IdCommunity == communityId)
-            .OrderByDescending(p => p.Createdat);
-        
-        var totalCount = await query.CountAsync();
-        
-        var posts = await query
-            .Skip(skip)
-            .Take(take)
-            .Select(p => new Post {
-                Id = p.Id,
-                IdCommunity = p.IdCommunity,
-                Createdat = p.Createdat,
-                Updatedat = p.Updatedat,
-                Title = p.Title,
-                Textcontent = p.Textcontent,
-                Imageurl = p.Imageurl,
-                Likes = p.Likes,
-                CommentCount = p.CommentCount,
-                IdTypeNavigation = p.IdTypeNavigation,
-                IdCommunityNavigation = p.IdCommunityNavigation,
-                IdUserNavigation = p.IdUserNavigation,
-            })
-            .ToListAsync();
-
-        return (posts, totalCount);
-    }
+    
 
     public async Task<Post?> LikePostById(int postId)
     {
