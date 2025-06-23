@@ -63,15 +63,30 @@ public class PostService : IPostService
         };
     }
     
-    public async Task<PagedResponseDto<PostsForUserIdResponseDto>> GetInstitutionForUserFeedById(int userId, int skip, int take)
+    public async Task<PagedResponseDto<BasePostDto>> GetInstitutionForUserFeedById(int userId, int skip, int take)
     {
         var suscribedUserInstitutioncommunitiesIds = await _unitOfWork.Communities.GetIdsForSuscribedUserInstitution(userId);
         var posts = await _unitOfWork.Posts.GetForCommunityIds(suscribedUserInstitutioncommunitiesIds, skip, take);
         var totalPosts = await _unitOfWork.Posts.CountPostsAsync(suscribedUserInstitutioncommunitiesIds);
         var hasMore = totalPosts > (skip + take);
-        return new PagedResponseDto<PostsForUserIdResponseDto>
+        return new PagedResponseDto<BasePostDto>
         {
-            Items = posts.Adapt<IEnumerable<PostsForUserIdResponseDto>>(),
+            Items = posts.Adapt<IEnumerable<BasePostDto>>(),
+            HasMore = hasMore,
+            TotalCount = totalPosts
+        };
+    }
+    
+    public async Task<PagedResponseDto<BasePostDto>> GetPostsByCommunityId(int id, int skip, int take)
+    {
+        var communitiesId = new List<int>() { id };
+        var posts = await _unitOfWork.Posts.GetForCommunityIds(communitiesId, skip, take);
+        var totalPosts = await _unitOfWork.Posts.CountPostsAsync(communitiesId);
+        var hasMore = totalPosts > (skip + take);
+        
+        return new PagedResponseDto<BasePostDto>
+        {
+            Items = posts.Adapt<IEnumerable<BasePostDto>>(),
             HasMore = hasMore,
             TotalCount = totalPosts
         };
@@ -100,19 +115,6 @@ public class PostService : IPostService
         }
         
         return post.Adapt<BasePostDto>();
-    }
-    
-    public async Task<PagedResponseDto<BasePostDto>> GetPostsByCommunityId(int id, int skip, int take)
-    {
-        var (posts, totalCount) = await _unitOfWork.Posts.GetPostsByCommunityId(id, skip, take);
-        var postDtos = posts.Adapt<IEnumerable<BasePostDto>>();
-        
-        return new PagedResponseDto<BasePostDto>
-        {
-            Items = postDtos,
-            TotalCount = totalCount,
-            HasMore = totalCount > (skip + take)
-        };
     }
 
     public async Task<PostDto> CreatePost(CreatePostDto createPostDto)

@@ -20,5 +20,5 @@ public interface IPostService
     Task<PostsForUserIdResponseDto> LikeApost(int postId);
 
     Task<PagedResponseDto<BasePostDto>> GetAllForUserFeedById(int userId, int skip, int take);
-    Task<PagedResponseDto<PostsForUserIdResponseDto>> GetInstitutionForUserFeedById(int userId, int skip, int take);
+    Task<PagedResponseDto<BasePostDto>> GetInstitutionForUserFeedById(int userId, int skip, int take);
 }
