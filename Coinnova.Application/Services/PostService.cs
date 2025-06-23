@@ -102,24 +102,16 @@ public class PostService : IPostService
         return post.Adapt<BasePostDto>();
     }
     
-    public async Task<PagedResponseDto<PostsForCommunityDto>> GetPostsByCommunityId(int id, int skip, int take)
+    public async Task<PagedResponseDto<BasePostDto>> GetPostsByCommunityId(int id, int skip, int take)
     {
-        var query = await _unitOfWork.Posts.GetPostsByCommunityId(id);
-        var totalPosts = await query.CountAsync();
+        var (posts, totalCount) = await _unitOfWork.Posts.GetPostsByCommunityId(id, skip, take);
+        var postDtos = posts.Adapt<IEnumerable<BasePostDto>>();
         
-        var posts = await query
-            .Skip(skip)
-            .Take(take)
-            .ProjectToType<PostsForCommunityDto>()
-            .ToListAsync();
-        
-        var hasMore = totalPosts > (skip + take);
-
-        return new PagedResponseDto<PostsForCommunityDto>
+        return new PagedResponseDto<BasePostDto>
         {
-            Items = posts,
-            HasMore = hasMore,
-            TotalCount = totalPosts
+            Items = postDtos,
+            TotalCount = totalCount,
+            HasMore = totalCount > (skip + take)
         };
     }
 
