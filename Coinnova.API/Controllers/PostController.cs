@@ -29,9 +29,9 @@ public class PostController : ControllerBase
     /// <response code="401">No autorizado. El usuario no ha iniciado sesión.</response>
     /// <response code="403">Prohibido. El usuario no tiene el rol requerido.</response>
     [HttpGet("user-feed/{id}")]
-    public async Task<IActionResult> PostsForUserId([FromRoute] int id, [FromQuery]int skip, [FromQuery] int take)
+    public async Task<IActionResult> GeneralPostsForUserId([FromRoute] int id, [FromQuery]int skip, [FromQuery] int take)
     {
-        var posts = await _postService.GetPostsForUserFeedById(id, skip, take);
+        var posts = await _postService.GetAllForUserFeedById(id, skip, take);
         return Ok(posts);
     }
 
@@ -103,6 +103,22 @@ public class PostController : ControllerBase
             return BadRequest(ModelState);
         var post = await _postService.CreatePost(createPostDto);
         return Ok(post);
+    }
+
+    [HttpPost("post/{id}/like")]
+    public async Task<IActionResult> LikeAPost([FromRoute] int id)
+    {
+        var post = await _postService.LikeApost(id);
+        if (post == null) return NotFound();
+
+        return Ok(new { post.Id, post.Likes });
+    }
+    
+    [HttpGet("institution-user-feed/{id}")]
+    public async Task<IActionResult> InstitutionPostsForUserId([FromRoute] int id, [FromQuery]int skip, [FromQuery] int take)
+    {
+        var posts = await _postService.GetInstitutionForUserFeedById(id, skip, take);
+        return Ok(posts);
     }
     
 }

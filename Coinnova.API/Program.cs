@@ -40,15 +40,14 @@ builder.Services.AddSwaggerWithJwt();
 // añadir configuracion de Mapster
 builder.Services.AddMapster();
 
-// Inyección de Rate Limiting desde configuración externa
-builder.Services.AddRateLimitConfiguration();
+
 
 // Agregar política de CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173")
+        policy.WithOrigins("https://coinnova-ts.vercel.app")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -109,8 +108,7 @@ app.UseRouting();
 app.UseAuthentication(); // agregado para jwt
 app.UseCors("AllowFrontend");
 app.UseAuthorization();
-// usar rate limit
-app.UseRateLimiter();
+
 
 app.UseGlobalExceptionHandling(); // Excepciones 500 y más
 

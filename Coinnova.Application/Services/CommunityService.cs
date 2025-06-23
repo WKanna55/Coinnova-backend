@@ -28,7 +28,8 @@ public class CommunityService : ICommunityService
             {
                 Id = c.Id,
                 Name = c.Name,
-                MemberCount = c.CommunityMember.Count()
+                MemberCount = c.CommunityMember.Count(),
+                ImageUrl = c.Imageurl
             })
             .Take(5)
             .ToListAsync();

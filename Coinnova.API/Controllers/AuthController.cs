@@ -26,7 +26,7 @@ public class AuthController : ControllerBase
     /// <response code="400">La solicitud es inválida (por ejemplo, datos incompletos o formato incorrecto).</response>
     /// <response code="404">Usuario no encontrado o credenciales inválidas.</response>
     [HttpPost("login")]
-    [EnableRateLimiting("LoginFixedWindow")]
+
     public async Task<IActionResult> Login([FromBody] LoginRequestDto loginDto)
     {
         if (!ModelState.IsValid) 
