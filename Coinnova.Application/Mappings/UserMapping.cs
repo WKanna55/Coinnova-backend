@@ -1,4 +1,5 @@
 ﻿using Coinnova.Application.Dtos.User;
+using Coinnova.Application.Dtos.User.HttpMethods;
 using Coinnova.Domain.Entities;
 using Mapster;
 
@@ -28,5 +29,11 @@ public class UserMapping : IRegister
             .Map(dest => dest.Id, src => src.Id)
             .Map(dest => dest.Name, src => src.Name)
             .Map(dest => dest.ImageUrl, src => src.Imageurl);
+
+        // ---------- PATCH parcial(no mapea nulos): DTO → entidad ----------
+        config.NewConfig<UpdateUserRequestDto, User>()     // dirección correcta
+            .IgnoreNullValues(true)                     // NO sobrescribe con null
+            .Map(dest => dest.Name,       src => src.Name)
+            .Map(dest => dest.Biography,  src => src.Biography);
     }
 }
