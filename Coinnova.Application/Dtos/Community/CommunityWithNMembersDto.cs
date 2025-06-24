@@ -7,5 +7,5 @@ public class CommunityWithNMembersDto
     public string Name { get; set; } = null!;
     
     public int MemberCount { get; set; }
-    public string ImageUrl { get; set; }
+    public string Imageurl { get; set; }
 }
