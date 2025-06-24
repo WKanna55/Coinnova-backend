@@ -29,7 +29,7 @@ public class CommunityService : ICommunityService
                 Id = c.Id,
                 Name = c.Name,
                 MemberCount = c.CommunityMember.Count(),
-                ImageUrl = c.Imageurl
+                Imageurl = c.Imageurl
             })
             .Take(5)
             .ToListAsync();
@@ -55,10 +55,10 @@ public class CommunityService : ICommunityService
         return communities.Adapt<IEnumerable<CommunityUsingBaseDto>>();
     }
 
-    public async Task<List<CommunityDto>> GetByInstitutionId(int institutionId)
+    public async Task<List<CommunityWithNMembersDto>> GetByInstitutionId(int institutionId)
     {
         var communities = await _unitOfWork.Communities.GetForInstitutions(institutionId);
-        return communities.Adapt<List<CommunityDto>>();
+        return communities.Adapt<List<CommunityWithNMembersDto>>();
     }
     
 }
