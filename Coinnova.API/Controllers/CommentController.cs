@@ -36,6 +36,13 @@ public class CommentController : ControllerBase
         return Ok(comments);
     }
 
+    [HttpGet("{commentId}")]
+    public async Task<IActionResult> GetCommentWithRepliesByParentCommentId([FromRoute] int commentId, int? depth)
+    {
+        var commentsWithReplies = await _commentService.GetCommentReplies(commentId, depth);
+        return Ok(commentsWithReplies);
+    }
+
     [HttpPost("createComment")]
     public async Task<IActionResult> CreateComment([FromBody] CreateCommentDto createCommentDto)
     {
