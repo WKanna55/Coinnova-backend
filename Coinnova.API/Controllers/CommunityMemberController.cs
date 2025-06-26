@@ -9,7 +9,7 @@ namespace Coinnova.API.Controllers;
 [Route("api/[controller]")]
 public class CommunityMemberController : ControllerBase
 {
-    public readonly ICommunityMemberService _communityMemberService;
+    private readonly ICommunityMemberService _communityMemberService;
 
     public CommunityMemberController(ICommunityMemberService communityMemberService)
     {
