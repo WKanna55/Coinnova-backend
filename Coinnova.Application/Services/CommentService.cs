@@ -45,9 +45,10 @@ public class CommentService : ICommentService
         }
         
         var commentDepth = await _unitOfWork.Comments.GetCommentDepthAsync(comment.Id);
+        var replies = await _unitOfWork.Comments.GetRepliesAsync(comment.Id);
         var resultDtos = new List<CommentWithRepliesDto>();
 
-        foreach (var reply in comment.InverseIdParentCommentNavigation)
+        foreach (var reply in replies)
         {
             var dto = await BuildCommentWithRepliesAsync(reply, commentDepth, targetDepth);
             resultDtos.Add(dto);

@@ -65,6 +65,9 @@ public class CommentRepository : Repository<Comment>, ICommentRepository
         return await _context.Comment
             .AsNoTracking()
             .Where(c => c.Id == commentId)
+            .Include(c => c.IdUserNavigation)
+            .Include(c => c.IdTypeNavigation)
+            .Include(c => c.InverseIdParentCommentNavigation)
             .Select(c => new Comment
             {
                 Id = c.Id,
