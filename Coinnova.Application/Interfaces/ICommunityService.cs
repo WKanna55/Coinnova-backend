@@ -8,6 +8,6 @@ public interface ICommunityService
 {
     Task<List<CommunityWithNMembersDto>> Get5PopularCommunities();
     Task<IEnumerable<CommunityUsingBaseDto>> Get12CommunitiesByCriteria(string criteria, int? categoryId = null);
-    Task<List<CommunityDto>> GetByInstitutionId(int institutionId);
     Task<IEnumerable<CommunityUsingBaseDto>> SearchByName(string name);
+    Task<List<CommunityWithNMembersDto>> GetByInstitutionId(int institutionId);
 }

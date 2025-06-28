@@ -1,10 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
 
-namespace Coinnova.Application.Dtos.User;
+namespace Coinnova.Application.Dtos.User.HttpMethods;
 
 public class UpdateUserRequestDto
 {
-    public required string Name { get; set; }
-    public required string Biography { get; set; }
-    public required string ImageUrl { get; set; }
+    public string? Name { get; set; }
+    public string? Biography { get; set; }
+    public IFormFile? Image { get; set; }  // Importante: esto necesita [FromForm]
 }
