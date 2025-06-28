@@ -1,9 +1,11 @@
 ﻿using System.Security.Claims;
+using Coinnova.API.Filters;
 using Coinnova.Application.Dtos.User;
 using Coinnova.Application.Dtos.User.HttpMethods;
 using Coinnova.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace Coinnova.API.Controllers;
 
@@ -60,6 +62,7 @@ public class UserController : ControllerBase
     /// <response code="401">No autorizado. El usuario no ha iniciado sesión.</response>
     /// <response code="403">Prohibido. El usuario no tiene el rol requerido.</response>
     [HttpPatch("{userId}")]
+    [AuthorizeSameUser(RouteIdName = "userId", ClaimType = JwtRegisteredClaimNames.Sub)] // etiqueta personalizada
     public async Task<IActionResult> EditProfile([FromRoute] int userId,
         [FromForm] UpdateUserRequestDto dto)
     {

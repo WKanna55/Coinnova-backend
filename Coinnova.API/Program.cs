@@ -101,8 +101,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-
-
 // agregar para que funcione
 app.UseRouting();
 app.UseAuthentication(); // agregado para jwt
