@@ -12,4 +12,5 @@ public interface ICommunityRepository: IRepository<Community>
     Task<List<Community>> GetForInstitutions(int institutionId);
     Task<IList<int>> GetIdsForSuscribedUserGeneral(int userId);
     Task<IList<int>> GetIdsForSuscribedUserInstitution(int userId);
+    Task<IEnumerable<Community>> SearchCommunitiesByName(string name);
 }

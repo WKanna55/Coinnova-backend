@@ -83,5 +83,20 @@ public class CommunityRepository : Repository<Community>, ICommunityRepository
             .ToListAsync();
         return communityIds;
     }
-    
+
+    public async Task<IEnumerable<Community>> SearchCommunitiesByName(string name)
+    {
+        return await _context.Community
+            .Where(c => c.Name.ToLower().Contains(name.ToLower()))
+            .Select(c => new Community
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Description = c.Description,
+                Imageurl = c.Imageurl,
+                Createdat = c.Createdat,
+                MemberCount = c.CommunityMember.Count()
+            })
+            .ToListAsync();
+    }
 }

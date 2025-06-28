@@ -60,5 +60,14 @@ public class CommunityService : ICommunityService
         var communities = await _unitOfWork.Communities.GetForInstitutions(institutionId);
         return communities.Adapt<List<CommunityDto>>();
     }
+
+    public async Task<IEnumerable<CommunityUsingBaseDto>> SearchByName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return Enumerable.Empty<CommunityUsingBaseDto>();
+        
+        var communities = await _unitOfWork.Communities.SearchCommunitiesByName(name);
+        return communities.Adapt<IEnumerable<CommunityUsingBaseDto>>();
+    }
     
 }

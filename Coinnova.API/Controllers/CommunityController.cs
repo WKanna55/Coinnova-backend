@@ -85,5 +85,11 @@ public class CommunityController : ControllerBase
         var communities = await _communityService.GetByInstitutionId(institutionId);
         return Ok(communities);
     }
-    
+
+    [HttpGet("search")]
+    public async Task<IActionResult> SearchCommunitiesByName([FromQuery] string name)
+    {
+        var communities = await _communityService.SearchByName(name);
+        return Ok(communities);
+    }
 }
