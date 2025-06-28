@@ -120,5 +120,12 @@ public class PostController : ControllerBase
         var posts = await _postService.GetInstitutionForUserFeedById(id, skip, take);
         return Ok(posts);
     }
+
+    [HttpGet("search")]
+    public async Task<IActionResult> SearchPostsByTitle([FromQuery] string title)
+    {
+        var posts = await _postService.SearchPostByTitleAsync(title);
+        return Ok(posts);
+    }
     
 }

@@ -21,4 +21,5 @@ public interface IPostService
 
     Task<PagedResponseDto<BasePostDto>> GetAllForUserFeedById(int userId, int skip, int take);
     Task<PagedResponseDto<BasePostDto>> GetInstitutionForUserFeedById(int userId, int skip, int take);
+    Task<IEnumerable<BasePostDto>> SearchPostByTitleAsync(string title);
 }
