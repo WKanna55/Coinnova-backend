@@ -108,4 +108,18 @@ public class UserController : ControllerBase
         
         return Ok(userInfo);
     } 
+    
+    [HttpGet("detail/{id}")]
+    [Authorize]
+    public async Task<IActionResult> GetDetailedById([FromRoute] int id)
+    {
+        var user = await _userService.GetDetailedById(id);
+        if (user == null)
+        {
+            return NotFound("Usuario no encontrado");
+        }
+        
+        return Ok(user);
+    } 
+    
 }

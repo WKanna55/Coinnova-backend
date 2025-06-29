@@ -107,4 +107,13 @@ public class UserService : IUserService
 
     }
     
+    public async Task<UserDto> GetDetailedById(int userId)
+    {
+        var user = await _unitOfWork.Users.GetByIdWithRelations(userId);
+        if (user == null)
+            throw new Exception("Usuario no encontrado");
+
+        return user.Adapt<UserDto>();
+    }
+    
 }
