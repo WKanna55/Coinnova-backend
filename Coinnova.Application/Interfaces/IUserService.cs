@@ -12,4 +12,5 @@ public interface IUserService
     Task<IEnumerable<UserSimpleDto>> GetFirstCommunityMembers(int communityId);
     Task<UserDto> GetLoggedUserInfo(int userId);
     Task<bool> UploadProfileImage(UploadUserImageDto uploadUserImageDto);
+    Task<UserDto> GetDetailedById(int userId);
 }
