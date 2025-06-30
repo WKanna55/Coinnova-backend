@@ -80,6 +80,7 @@ builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IInstitutionService, InstitutionService>();
 builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
 builder.Services.AddScoped<FileUploadFactory>();
+builder.Services.AddScoped<ICommunityMemberService, CommunityMemberService>();
 
 // -------------------------------- app construida --------------------------------
 var app = builder.Build();
