@@ -96,7 +96,6 @@ public class PostRepository : Repository<Post>, IPostRepository
             .Include(p => p.Comment)
             .FirstOrDefaultAsync(p => p.Id == postId);
     }
-    
 
     public async Task<Post?> LikePostById(int postId)
     {
@@ -106,5 +105,14 @@ public class PostRepository : Repository<Post>, IPostRepository
         post.Likes = (post.Likes ?? 0) + 1;
         return post;
     }
-    
+
+    public async Task<IEnumerable<Post>> SearchPostsByTitleAsync(string searchTerm)
+    {
+        return await _context.Post
+            .Where(p => p.Title.ToLower().Contains(searchTerm.ToLower()))
+            .Include(p => p.IdUserNavigation)
+            .Include(p => p.IdTypeNavigation)
+            .Include(p => p.IdCommunityNavigation)
+            .ToListAsync();
+    }
 } 

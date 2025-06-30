@@ -37,7 +37,7 @@ private readonly ApplicationDbContext _context;
             {
                 Id = ev.Id,
                 Name = ev.Name,
-                ImageUrl = ev.Imageurl,
+                Imageurl = ev.Imageurl,
                 InitialDate = ev.Initialdate,
                 Place = ev.Place,
                 SourceName = cat.Name
@@ -52,7 +52,7 @@ private readonly ApplicationDbContext _context;
             {
                 Id = ev.Id,
                 Name = ev.Name,
-                ImageUrl = ev.Imageurl,
+                Imageurl = ev.Imageurl,
                 InitialDate = ev.Initialdate,
                 Place = ev.Place,
                 SourceName = inst.Name

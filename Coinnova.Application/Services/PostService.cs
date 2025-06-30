@@ -172,5 +172,13 @@ public class PostService : IPostService
         await _unitOfWork.Complete();
         return updated.Adapt<PostsForUserIdResponseDto>();
     }
-    
+
+    public async Task<IEnumerable<BasePostDto>> SearchPostByTitleAsync(string title)
+    {
+        if (string.IsNullOrWhiteSpace(title))
+            return Enumerable.Empty<BasePostDto>();
+
+        var posts = await _unitOfWork.Posts.SearchPostsByTitleAsync(title);
+        return posts.Adapt<IEnumerable<BasePostDto>>();
+    }
 }

@@ -1,8 +1,11 @@
 ﻿using System.Security.Claims;
+using Coinnova.API.Filters;
 using Coinnova.Application.Dtos.User;
+using Coinnova.Application.Dtos.User.HttpMethods;
 using Coinnova.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace Coinnova.API.Controllers;
 
@@ -47,24 +50,27 @@ public class UserController : ControllerBase
         var user = await _userService.GetUserInfoById(userId);
         return Ok(user);
     }
-    
+
     /// <summary>
     /// Edita el perfil del usuario.
     /// </summary>
+    /// <param name="userId"></param>
     /// <param name="dto">Datos actualizados del usuario.</param>
     /// <returns>Información actualizada del usuario.</returns>
     /// <response code="200">Perfil actualizado exitosamente.</response>
     /// <response code="400">Datos inválidos en la solicitud.</response>
     /// <response code="401">No autorizado. El usuario no ha iniciado sesión.</response>
     /// <response code="403">Prohibido. El usuario no tiene el rol requerido.</response>
-    [HttpPut]
-    public async Task<IActionResult> EditProfile([FromBody] UpdateUserRequestDto dto)
+    [HttpPatch("{userId}")]
+    [AuthorizeSameUser(RouteIdName = "userId", ClaimType = JwtRegisteredClaimNames.Sub)] // etiqueta personalizada
+    public async Task<IActionResult> EditProfile([FromRoute] int userId,
+        [FromForm] UpdateUserRequestDto dto)
     {
-        var claim = User.FindFirstValue(ClaimTypes.NameIdentifier) 
-                    ?? User.FindFirstValue("UserId");
+        //var claim = User.FindFirstValue(ClaimTypes.NameIdentifier) 
+        //            ?? User.FindFirstValue("UserId");
     
-        if (claim == null || !int.TryParse(claim, out var userId))
-            return Unauthorized();
+        //if (claim == null || !int.TryParse(claim, out var userId))
+        //    return Unauthorized();
     
         var response = await _userService.UpdateUserAsync(userId, dto);
         return Ok(response);
@@ -102,4 +108,18 @@ public class UserController : ControllerBase
         
         return Ok(userInfo);
     } 
+    
+    [HttpGet("detail/{id}")]
+    [Authorize]
+    public async Task<IActionResult> GetDetailedById([FromRoute] int id)
+    {
+        var user = await _userService.GetDetailedById(id);
+        if (user == null)
+        {
+            return NotFound("Usuario no encontrado");
+        }
+        
+        return Ok(user);
+    } 
+    
 }
