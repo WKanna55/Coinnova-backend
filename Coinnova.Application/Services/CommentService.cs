@@ -34,6 +34,29 @@ public class CommentService : ICommentService
         return resultDtos;
     }
 
+    public async Task<IEnumerable<CommentWithRepliesDto>> GetCommentReplies(int commentId, int? requestDepth = null)
+    {
+        var targetDepth = requestDepth ?? DefaultRequestedDepth;
+        Comment? comment = await _unitOfWork.Comments.GetCommentById(commentId);
+
+        if (comment is null)
+        {
+            return Enumerable.Empty<CommentWithRepliesDto>();
+        }
+        
+        var commentDepth = await _unitOfWork.Comments.GetCommentDepthAsync(comment.Id);
+        var replies = await _unitOfWork.Comments.GetRepliesAsync(comment.Id);
+        var resultDtos = new List<CommentWithRepliesDto>();
+
+        foreach (var reply in replies)
+        {
+            var dto = await BuildCommentWithRepliesAsync(reply, commentDepth, targetDepth);
+            resultDtos.Add(dto);
+        }
+
+        return resultDtos;
+    }
+
     private async Task<CommentWithRepliesDto> BuildCommentWithRepliesAsync(
         Comment comment,
         int currentDepthLevel,

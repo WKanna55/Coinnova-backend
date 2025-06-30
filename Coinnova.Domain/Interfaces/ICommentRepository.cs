@@ -7,4 +7,6 @@ public interface ICommentRepository : IRepository<Comment>
 {
     Task<IEnumerable<Comment>> GetRootCommentsAsync(int postId);
     Task<IEnumerable<Comment>> GetRepliesAsync(int parentCommentId);
+    Task<Comment?> GetCommentById(int commentId);
+    Task<int> GetCommentDepthAsync(int commentId);
 }

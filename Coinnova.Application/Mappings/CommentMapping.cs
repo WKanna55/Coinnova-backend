@@ -23,6 +23,7 @@ public class CommentMapping : IRegister
             // .Map(dest => dest.Author, src => src.IdUserNavigation.Adapt<UserSimpleDto>())
             .Map(dest => dest.Author, src => src.IdUserNavigation != null ? src.IdUserNavigation.Adapt<UserSimpleDto>() : null)
             .Map(dest => dest.RepliesCount, src => src.ReplyCount)
+            .Map(dest => dest.PostId, src => src.IdPost)
             .Map(dest => dest.ParentCommentId, src => src.IdParentComment);
 
         config.ForType<Comment, CommentWithRepliesDto>()
