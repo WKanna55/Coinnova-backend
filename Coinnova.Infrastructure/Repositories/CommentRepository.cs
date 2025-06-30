@@ -32,7 +32,8 @@ public class CommentRepository : Repository<Comment>, ICommentRepository
                 IdTypeNavigation = c.IdTypeNavigation,
                 IdUserNavigation = c.IdUserNavigation,
                 ReplyCount = c.InverseIdParentCommentNavigation.Count(),
-                IdParentComment = c.IdParentComment
+                IdParentComment = c.IdParentComment,
+                IdPost = c.IdPost
             })
             .OrderBy(c => c.Createdat)
             .ToListAsync();
@@ -54,7 +55,8 @@ public class CommentRepository : Repository<Comment>, ICommentRepository
                 IdTypeNavigation = c.IdTypeNavigation,
                 IdUserNavigation = c.IdUserNavigation,
                 ReplyCount = c.InverseIdParentCommentNavigation.Count(),
-                IdParentComment = c.IdParentComment
+                IdParentComment = c.IdParentComment,
+                IdPost = c.IdPost
             })
             .OrderBy(c => c.Createdat)
             .ToListAsync();
@@ -79,7 +81,8 @@ public class CommentRepository : Repository<Comment>, ICommentRepository
                 IdUserNavigation = c.IdUserNavigation,
                 ReplyCount = c.InverseIdParentCommentNavigation.Count(),
                 InverseIdParentCommentNavigation = c.InverseIdParentCommentNavigation,
-                IdParentComment = c.IdParentComment
+                IdParentComment = c.IdParentComment,
+                IdPost = c.IdPost
             })
             .FirstOrDefaultAsync();
     }
