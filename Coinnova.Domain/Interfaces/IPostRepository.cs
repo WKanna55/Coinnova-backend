@@ -11,5 +11,5 @@ public interface IPostRepository : IRepository<Post>
     Task<Post?> LikePostById(int postId);
     Task<IEnumerable<Post>> GetForCommunityIds(IList<int> communityIds, int skip, int take);
     Task<int> CountPostsAsync(IList<int> communityIds);
-    Task<IEnumerable<Post>> SearchPostsByTitleAsync(string searchTerm);
+    Task<(IEnumerable<Post> Posts, int totalCount)> SearchPostsByTitleAsync(string searchTerm, int skip, int take);
 }

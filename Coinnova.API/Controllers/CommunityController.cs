@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Coinnova.API.Controllers;
 
 [ApiController]
-
+[Authorize(Roles="standard")]
 [Route("api/[controller]")]
 public class CommunityController : ControllerBase
 {
@@ -86,10 +86,19 @@ public class CommunityController : ControllerBase
         return Ok(communities);
     }
 
+    /// <summary>
+    /// Busca comunidades por nombre con paginación.
+    /// </summary>
+    /// <param name="name">Nombre o parte del nombre a buscar.</param>
+    /// <param name="skip">Cantidad de comunidades a omitir (paginación).</param>
+    /// <param name="take">Cantidad de comunidades a retornar (paginación).</param>
+    /// <returns>Una respuesta paginada con las comunidades que coinciden con el nombre.</returns>
+    /// <response code="200">Comunidades encontradas exitosamente.</response>
+    /// <response code="400">Parámetros inválidos para paginación.</response>
     [HttpGet("search")]
-    public async Task<IActionResult> SearchCommunitiesByName([FromQuery] string name)
+    public async Task<IActionResult> SearchCommunitiesByName([FromQuery] string name, [FromQuery] int skip, [FromQuery] int take)
     {
-        var communities = await _communityService.SearchByName(name);
+        var communities = await _communityService.SearchByName(name, skip, take);
         return Ok(communities);
     }
 }

@@ -61,13 +61,26 @@ public class CommunityService : ICommunityService
         return communities.Adapt<List<CommunityWithNMembersDto>>();
     }
 
-    public async Task<IEnumerable<CommunityUsingBaseDto>> SearchByName(string name)
+    public async Task<PagedResponseDto<CommunityUsingBaseDto>> SearchByName(string name, int skip, int take)
     {
         if (string.IsNullOrWhiteSpace(name))
-            return Enumerable.Empty<CommunityUsingBaseDto>();
+            return new PagedResponseDto<CommunityUsingBaseDto>
+            {
+                Items = Enumerable.Empty<CommunityUsingBaseDto>(),
+                HasMore = false,
+                TotalCount = 0
+            };
         
-        var communities = await _unitOfWork.Communities.SearchCommunitiesByName(name);
-        return communities.Adapt<IEnumerable<CommunityUsingBaseDto>>();
+        var (communities, totalCount) = await _unitOfWork.Communities.SearchCommunitiesByName(name, skip, take);
+        var communityDtos = communities.Adapt<IEnumerable<CommunityUsingBaseDto>>();
+        var hasMore = totalCount > (skip + take);
+
+        return new PagedResponseDto<CommunityUsingBaseDto>
+        {
+            Items = communityDtos,
+            TotalCount = totalCount,
+            HasMore = hasMore
+        };
     }
     
 }

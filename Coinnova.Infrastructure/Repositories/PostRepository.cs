@@ -106,13 +106,23 @@ public class PostRepository : Repository<Post>, IPostRepository
         return post;
     }
 
-    public async Task<IEnumerable<Post>> SearchPostsByTitleAsync(string searchTerm)
+    public async Task<(IEnumerable<Post> Posts, int totalCount)> SearchPostsByTitleAsync(string searchTerm, int skip, int take)
     {
-        return await _context.Post
+        var query = _context.Post
+            .AsNoTracking()
             .Where(p => p.Title.ToLower().Contains(searchTerm.ToLower()))
+            .OrderByDescending(p => p.Createdat);
+
+        var totalCount = await query.CountAsync();
+
+        var posts = await query
+            .Skip(skip)
+            .Take(take)
             .Include(p => p.IdUserNavigation)
             .Include(p => p.IdTypeNavigation)
             .Include(p => p.IdCommunityNavigation)
             .ToListAsync();
+
+        return (posts, totalCount);
     }
 } 

@@ -173,12 +173,25 @@ public class PostService : IPostService
         return updated.Adapt<PostsForUserIdResponseDto>();
     }
 
-    public async Task<IEnumerable<BasePostDto>> SearchPostByTitleAsync(string title)
+    public async Task<PagedResponseDto<BasePostDto>> SearchPostByTitleAsync(string title, int skip, int take)
     {
         if (string.IsNullOrWhiteSpace(title))
-            return Enumerable.Empty<BasePostDto>();
+            return new PagedResponseDto<BasePostDto>
+            {
+                Items = Enumerable.Empty<BasePostDto>(),
+                HasMore = false,
+                TotalCount = 0
+            };
 
-        var posts = await _unitOfWork.Posts.SearchPostsByTitleAsync(title);
-        return posts.Adapt<IEnumerable<BasePostDto>>();
+        var (posts, totalCount) = await _unitOfWork.Posts.SearchPostsByTitleAsync(title, skip, take);
+        var postDtos = posts.Adapt<IEnumerable<BasePostDto>>();
+        var hasMore = totalCount > (skip + take);
+
+        return new PagedResponseDto<BasePostDto>
+        {
+            Items = postDtos,
+            TotalCount = totalCount,
+            HasMore = hasMore
+        };
     }
 }

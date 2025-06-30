@@ -84,10 +84,18 @@ public class CommunityRepository : Repository<Community>, ICommunityRepository
         return communityIds;
     }
 
-    public async Task<IEnumerable<Community>> SearchCommunitiesByName(string name)
+    public async Task<(IEnumerable<Community> Communities, int totalCount)> SearchCommunitiesByName(string name, int skip, int take)
     {
-        return await _context.Community
+        var query = _context.Community
+            .AsNoTracking()
             .Where(c => c.Name.ToLower().Contains(name.ToLower()))
+            .OrderByDescending(c => c.Createdat);
+
+        var totalCount = await query.CountAsync();
+
+        var communities = await query
+            .Skip(skip)
+            .Take(take)
             .Select(c => new Community
             {
                 Id = c.Id,
@@ -98,5 +106,7 @@ public class CommunityRepository : Repository<Community>, ICommunityRepository
                 MemberCount = c.CommunityMember.Count()
             })
             .ToListAsync();
+
+        return (communities, totalCount);
     }
 }

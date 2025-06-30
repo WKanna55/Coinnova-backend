@@ -121,10 +121,21 @@ public class PostController : ControllerBase
         return Ok(posts);
     }
 
+    /// <summary>
+    /// Busca publicaciones por título con paginación.
+    /// </summary>
+    /// <param name="title">Título o parte del título a buscar.</param>
+    /// <param name="skip">Cantidad de publicaciones a omitir (paginación).</param>
+    /// <param name="take">Cantidad de publicaciones a retornar (paginación).</param>
+    /// <returns>Una respuesta paginada con las publicaciones que coinciden con el título.</returns>
+    /// <response code="200">Publicaciones encontradas exitosamente.</response>
+    /// <response code="400">Parámetros inválidos para paginación.</response>
+    /// <response code="401">No autorizado. El usuario no ha iniciado sesión.</response>
+    /// <response code="403">Prohibido. El usuario no tiene el rol requerido.</response>
     [HttpGet("search")]
-    public async Task<IActionResult> SearchPostsByTitle([FromQuery] string title)
+    public async Task<IActionResult> SearchPostsByTitle([FromQuery] string title, [FromQuery] int skip, [FromQuery] int take)
     {
-        var posts = await _postService.SearchPostByTitleAsync(title);
+        var posts = await _postService.SearchPostByTitleAsync(title, skip, take);
         return Ok(posts);
     }
     
