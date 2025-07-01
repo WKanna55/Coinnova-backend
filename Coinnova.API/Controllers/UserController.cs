@@ -1,8 +1,9 @@
 ﻿using System.Security.Claims;
 using Coinnova.API.Filters;
-using Coinnova.Application.Dtos.User;
 using Coinnova.Application.Dtos.User.HttpMethods;
-using Coinnova.Application.Interfaces;
+using Coinnova.Application.UseCases.Users.Commands;
+using Coinnova.Application.UseCases.Users.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.JsonWebTokens;
@@ -14,11 +15,11 @@ namespace Coinnova.API.Controllers;
 [Route("api/[controller]")]
 public class UserController : ControllerBase
 {
-    private readonly IUserService _userService;
+    private readonly IMediator _mediator;
     
-    public UserController(IUserService userService)
+    public UserController(IMediator mediator)
     {
-        _userService = userService;
+        _mediator = mediator;
     }
     
     /// <summary>
@@ -33,7 +34,7 @@ public class UserController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById([FromRoute] int id)
     {
-        var user = await _userService.GetUserById(id);
+        var user = await _mediator.Send(new GetUserByIdQuery { Id = id });
 
         if (user == null) 
             return NotFound(new { message = $"Usuario con ID: {id} no encotrado." });
@@ -47,7 +48,7 @@ public class UserController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetUserInfo(int userId)
     {
-        var user = await _userService.GetUserInfoById(userId);
+        var user = await _mediator.Send(new GetUserInfoByIdQuery { UserId = userId });
         return Ok(user);
     }
 
@@ -66,13 +67,11 @@ public class UserController : ControllerBase
     public async Task<IActionResult> EditProfile([FromRoute] int userId,
         [FromForm] UpdateUserRequestDto dto)
     {
-        //var claim = User.FindFirstValue(ClaimTypes.NameIdentifier) 
-        //            ?? User.FindFirstValue("UserId");
-    
-        //if (claim == null || !int.TryParse(claim, out var userId))
-        //    return Unauthorized();
-    
-        var response = await _userService.UpdateUserAsync(userId, dto);
+        var response = await _mediator.Send(new UpdateUserCommand 
+        { 
+            UserId = userId, 
+            UserRequestDto = dto 
+        });
         return Ok(response);
     }
 
@@ -85,7 +84,7 @@ public class UserController : ControllerBase
     [HttpGet("community/{id}/members")]
     public async Task<IActionResult> GetFirstMembers([FromRoute] int id)
     {
-        var members = await _userService.GetFirstCommunityMembers(id);
+        var members = await _mediator.Send(new GetFirstCommunityMembersQuery { CommunityId = id });
         return Ok(members);
     }
     
@@ -100,7 +99,7 @@ public class UserController : ControllerBase
             return Unauthorized("Token inválido");
         }
 
-        var userInfo = await _userService.GetLoggedUserInfo(userId);
+        var userInfo = await _mediator.Send(new GetLoggedUserInfoQuery { UserId = userId });
         if (userInfo == null)
         {
             return NotFound("Usuario no encontrado");
@@ -113,7 +112,7 @@ public class UserController : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetDetailedById([FromRoute] int id)
     {
-        var user = await _userService.GetDetailedById(id);
+        var user = await _mediator.Send(new GetDetailedByIdQuery { UserId = id });
         if (user == null)
         {
             return NotFound("Usuario no encontrado");

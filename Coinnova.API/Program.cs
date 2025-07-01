@@ -72,7 +72,7 @@ builder.Services.AddScoped<IInstitutionEventRepository, InstitutionEventReposito
 
 // Servicios
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IUserService, UserService>();
+// IUserService removido - ahora se usa CQRS con MediatR
 // IPostService removido - ahora se usa CQRS con MediatR
 // ICommunityService removido - ahora se usa CQRS con MediatR
 builder.Services.AddScoped<ICommentService, CommentService>();
