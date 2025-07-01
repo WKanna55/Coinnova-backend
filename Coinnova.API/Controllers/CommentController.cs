@@ -1,5 +1,8 @@
 ﻿using Coinnova.Application.Dtos.Comment;
 using Coinnova.Application.Interfaces;
+using Coinnova.Application.UseCases.Comments.Commands;
+using Coinnova.Application.UseCases.Comments.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,15 +11,8 @@ namespace Coinnova.API.Controllers;
 [ApiController]
 [Authorize(Roles = "standard")]
 [Route("api/comment")]
-public class CommentController : ControllerBase
+public class CommentController(IMediator mediator) : ControllerBase
 {
-    private readonly ICommentService _commentService;
-
-    public CommentController(ICommentService commentService)
-    {
-        _commentService = commentService;
-    }
-
     /// <summary>
     /// Obtiene todos los comentarios asociados a una publicación, con sus respuestas anidadas según la profundidad indicada.
     /// </summary>
@@ -29,24 +25,31 @@ public class CommentController : ControllerBase
     /// <response code="200">Comentarios obtenidos exitosamente.</response>
     /// <response code="401">Usuario no autorizado.</response>
     /// <response code="403">El usuario no tiene el rol requerido para acceder a este recurso.</response>
+    
     [HttpGet("post/{postId}")]
     public async Task<IActionResult> GetAllCommentsByPostId([FromRoute] int postId, [FromQuery] int? depth)
     {
-        var comments = await _commentService.GetCommentsWithRepliesByPostIdAsync(postId, depth);
-        return Ok(comments);
+        return Ok(await mediator.Send(new GetCommentsWithRepliesByPostIdQuery
+        {
+            PostId = postId,
+            RequestDepth = depth
+        }));
     }
 
     [HttpGet("{commentId}")]
-    public async Task<IActionResult> GetCommentWithRepliesByParentCommentId([FromRoute] int commentId, int? depth)
+    public async Task<IActionResult> GetCommentWithRepliesByParentCommentId([FromRoute] int commentId, [FromQuery] int? depth)
     {
-        var commentsWithReplies = await _commentService.GetCommentReplies(commentId, depth);
-        return Ok(commentsWithReplies);
+        return Ok(await mediator.Send(new GetCommentRepliesQuery
+        {
+            CommentId = commentId,
+            RequestDepth = depth
+        }));
     }
 
     [HttpPost("createComment")]
-    public async Task<IActionResult> CreateComment([FromBody] CreateCommentDto createCommentDto)
+    public async Task<IActionResult> CreateComment([FromBody] CreateCommentCommand command)
     {
-        var createdComment = await _commentService.CreateComment(createCommentDto);
-        return CreatedAtAction(nameof(CreateComment), new { id = createdComment.Id }, createdComment);
+        var created = await mediator.Send(command);
+        return CreatedAtAction(nameof(CreateComment), new { id = created.Id }, created);
     }
 }
