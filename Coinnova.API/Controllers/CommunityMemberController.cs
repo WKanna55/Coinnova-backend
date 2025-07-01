@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Coinnova.API.Controllers;
 
 [ApiController]
-[Authorize(Roles = "standard")]
+[Authorize]
 [Route("api/[controller]")]
 public class CommunityMemberController(IMediator mediator) : ControllerBase
 {

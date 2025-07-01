@@ -39,6 +39,7 @@ public class EventController(IMediator mediator) : ControllerBase
     /// <response code="401">No autorizado. El usuario no ha iniciado sesión.</response>
     /// <response code="403">Prohibido. El usuario no tiene permisos para acceder a este recurso.</response>
     [HttpPost]
+    [Authorize(Roles = "admin")]
     public async Task<IActionResult> CreateEvent([FromForm] CreateEventDto createEventDto)
     {
         if (!ModelState.IsValid) 

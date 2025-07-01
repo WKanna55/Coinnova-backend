@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Coinnova.API.Controllers;
 
 [ApiController]
-[Authorize(Roles = "standard")]
+[Authorize]
 [Route("api/comment")]
 public class CommentController(IMediator mediator) : ControllerBase
 {

@@ -11,7 +11,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 namespace Coinnova.API.Controllers;
 
 [ApiController]
-[Authorize(Roles = "standard")]
+[Authorize]
 [Route("api/[controller]")]
 public class UserController : ControllerBase
 {
