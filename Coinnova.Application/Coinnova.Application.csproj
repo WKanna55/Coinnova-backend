@@ -23,25 +23,4 @@
       <ProjectReference Include="..\Coinnova.Domain\Coinnova.Domain.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="UseCases\Auth\Commands\" />
-      <Folder Include="UseCases\Auth\Queries\" />
-      <Folder Include="UseCases\Categories\Commands\" />
-      <Folder Include="UseCases\Categories\Queries\" />
-      <Folder Include="UseCases\Comments\Commands\" />
-      <Folder Include="UseCases\Comments\Queries\" />
-      <Folder Include="UseCases\Communities\Commands\" />
-      <Folder Include="UseCases\Communities\Queries\" />
-      <Folder Include="UseCases\CommunityMembers\Commands\" />
-      <Folder Include="UseCases\CommunityMembers\Queries\" />
-      <Folder Include="UseCases\Events\Commands\" />
-      <Folder Include="UseCases\Events\Queries\" />
-      <Folder Include="UseCases\Institutions\Commands\" />
-      <Folder Include="UseCases\Institutions\Queries\" />
-      <Folder Include="UseCases\Posts\Commands\" />
-      <Folder Include="UseCases\Posts\Queries\" />
-      <Folder Include="UseCases\Users\Commands\" />
-      <Folder Include="UseCases\Users\Queries\" />
-    </ItemGroup>
-
 </Project>
