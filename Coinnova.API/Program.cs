@@ -73,7 +73,7 @@ builder.Services.AddScoped<IInstitutionEventRepository, InstitutionEventReposito
 // Servicios
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IPostService, PostService>();
+// IPostService removido - ahora se usa CQRS con MediatR
 builder.Services.AddScoped<ICommunityService, CommunityService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
