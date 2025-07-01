@@ -1,4 +1,5 @@
-using Coinnova.Application.Interfaces;
+using Coinnova.Application.UseCases.Categories.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,15 +8,8 @@ namespace Coinnova.API.Controllers;
 [ApiController]
 [Authorize]
 [Route("api/[controller]")]
-public class CategoryController : ControllerBase
+public class CategoryController(IMediator mediator) : ControllerBase
 {
-    private readonly ICategoryService _categoryService;
-
-    public CategoryController(ICategoryService categoryService)
-    {
-        _categoryService = categoryService;
-    }
-    
     /// <summary>
     /// Obtiene la lista de todas las categorías disponibles.
     /// </summary>
@@ -25,7 +19,7 @@ public class CategoryController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetCategories()
     {
-        var categories = await _categoryService.GetCategories();
+        var categories = await mediator.Send(new GetCategoriesQuery());
         return Ok(categories);
     }
 }
