@@ -1,4 +1,5 @@
-using Coinnova.Application.Interfaces;
+using Coinnova.Application.UseCases.Communities.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,11 +10,11 @@ namespace Coinnova.API.Controllers;
 [Route("api/[controller]")]
 public class CommunityController : ControllerBase
 {
-    private readonly ICommunityService _communityService;
+    private readonly IMediator _mediator;
 
-    public CommunityController(ICommunityService communityService)
+    public CommunityController(IMediator mediator)
     {
-        _communityService = communityService;
+        _mediator = mediator;
     }
 
     /// <summary>
@@ -24,7 +25,8 @@ public class CommunityController : ControllerBase
     [HttpGet("populars")]
     public async Task<IActionResult> GetPopular()
     {
-        var communities = await _communityService.Get5PopularCommunities();
+        var query = new GetPopularCommunitiesQuery();
+        var communities = await _mediator.Send(query);
 
         return Ok(communities);
     }
@@ -48,7 +50,8 @@ public class CommunityController : ControllerBase
         [FromRoute] int categoryId, 
         [FromQuery] string criteria)
     {
-        var response = await _communityService.Get12CommunitiesByCriteria(criteria, categoryId);
+        var query = new GetCommunitiesByCriteriaQuery(criteria, categoryId);
+        var response = await _mediator.Send(query);
         return Ok(response);
     }
 
@@ -67,7 +70,8 @@ public class CommunityController : ControllerBase
     [HttpGet("category")]
     public async Task<IActionResult> GetCommunitiesByCriteria([FromQuery] string criteria)
     {
-        var response = await _communityService.Get12CommunitiesByCriteria(criteria);
+        var query = new GetCommunitiesByCriteriaQuery(criteria);
+        var response = await _mediator.Send(query);
         return Ok(response);
     }
 
@@ -82,7 +86,8 @@ public class CommunityController : ControllerBase
     [HttpGet("institution/{institutionId}")]
     public async Task<IActionResult> GetByInstitutionId([FromRoute] int institutionId)
     {
-        var communities = await _communityService.GetByInstitutionId(institutionId);
+        var query = new GetCommunitiesByInstitutionIdQuery(institutionId);
+        var communities = await _mediator.Send(query);
         return Ok(communities);
     }
 
@@ -98,7 +103,8 @@ public class CommunityController : ControllerBase
     [HttpGet("search")]
     public async Task<IActionResult> SearchCommunitiesByName([FromQuery] string name, [FromQuery] int skip, [FromQuery] int take)
     {
-        var communities = await _communityService.SearchByName(name, skip, take);
+        var query = new SearchCommunitiesByNameQuery(name, skip, take);
+        var communities = await _mediator.Send(query);
         return Ok(communities);
     }
 }
