@@ -73,12 +73,12 @@ builder.Services.AddScoped<IInstitutionEventRepository, InstitutionEventReposito
 // Servicios
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IPostService, PostService>();
-builder.Services.AddScoped<ICommunityService, CommunityService>();
+// IPostService removido - ahora se usa CQRS con MediatR
+// ICommunityService removido - ahora se usa CQRS con MediatR
 builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IEventService, EventService>();
-builder.Services.AddScoped<IInstitutionService, InstitutionService>();
+// IInstitutionService removido - ahora se usa CQRS con MediatR
 builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
 builder.Services.AddScoped<FileUploadFactory>();
 builder.Services.AddScoped<ICommunityMemberService, CommunityMemberService>();

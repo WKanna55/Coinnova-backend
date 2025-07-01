@@ -5,9 +5,11 @@ using System.Text.Json;
 using Coinnova.Application.Dtos.Auth;
 using Coinnova.Application.Dtos.User;
 using Coinnova.Application.Interfaces;
+using Coinnova.Application.UseCases.Institutions.Queries;
 using Coinnova.Domain.Entities;
 using Coinnova.Domain.Interfaces.Base;
 using Mapster;
+using MediatR;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -18,11 +20,13 @@ public class AuthService : IAuthService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IGoogleAuthService _googleAuthService;
+    private readonly IMediator _mediator;
 
-    public AuthService(IUnitOfWork unitOfWork, IConfiguration config, IGoogleAuthService googleAuthService)
+    public AuthService(IUnitOfWork unitOfWork, IConfiguration config, IGoogleAuthService googleAuthService, IMediator mediator)
     {
         _unitOfWork = unitOfWork;
         _googleAuthService = googleAuthService;
+        _mediator = mediator;
     }
 
     public async Task<LoginResponseDto> Login(LoginRequestDto loginDto)
@@ -99,7 +103,8 @@ public class AuthService : IAuthService
         if (user == null)
         {
             var dominio = googleUser.Email.Split('@')[1];
-            var institution = await _unitOfWork.InstitutionRepository.GetByDomainAsync(dominio);
+            var institutionQuery = new GetInstitutionByDomainQuery(dominio);
+            var institution = await _mediator.Send(institutionQuery);
             
             user = new User
             {

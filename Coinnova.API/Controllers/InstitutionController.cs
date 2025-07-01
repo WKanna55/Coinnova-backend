@@ -1,4 +1,5 @@
-using Coinnova.Application.Interfaces;
+using Coinnova.Application.UseCases.Institutions.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,11 +10,11 @@ namespace Coinnova.API.Controllers;
 [Route("api/[controller]")]
 public class InstitutionController : ControllerBase
 {
-    private readonly IInstitutionService _institutionService;
+    private readonly IMediator _mediator;
 
-    public InstitutionController(IInstitutionService institutionService)
+    public InstitutionController(IMediator mediator)
     {
-        _institutionService = institutionService;
+        _mediator = mediator;
     }
 
     /// <summary>
@@ -26,10 +27,9 @@ public class InstitutionController : ControllerBase
     [HttpGet("all-summary")]
     public async Task<IActionResult> GetAllInstitutionsSummary()
     {
-        var institutions = await _institutionService
-            .GetAllInstitutionsSummary();
+        var query = new GetAllInstitutionsSummaryQuery();
+        var institutions = await _mediator.Send(query);
         
         return Ok(institutions);
     }
-
 }

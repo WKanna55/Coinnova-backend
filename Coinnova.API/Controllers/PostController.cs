@@ -1,5 +1,7 @@
 using Coinnova.Application.Dtos.Post;
-using Coinnova.Application.Interfaces;
+using Coinnova.Application.UseCases.Posts.Commands;
+using Coinnova.Application.UseCases.Posts.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,11 +12,11 @@ namespace Coinnova.API.Controllers;
 [Route("api/[controller]")]
 public class PostController : ControllerBase
 {
-    private readonly IPostService _postService;
+    private readonly IMediator _mediator;
 
-    public PostController(IPostService postService)
+    public PostController(IMediator mediator)
     {
-        _postService = postService;
+        _mediator = mediator;
     }
 
     /// <summary>
@@ -31,7 +33,8 @@ public class PostController : ControllerBase
     [HttpGet("user-feed/{id}")]
     public async Task<IActionResult> GeneralPostsForUserId([FromRoute] int id, [FromQuery]int skip, [FromQuery] int take)
     {
-        var posts = await _postService.GetAllForUserFeedById(id, skip, take);
+        var query = new GetUserFeedQuery(id, skip, take);
+        var posts = await _mediator.Send(query);
         return Ok(posts);
     }
 
@@ -46,7 +49,8 @@ public class PostController : ControllerBase
     [HttpGet("{postId}")]
     public async Task<IActionResult> GetPostDetails(int postId)
     {
-        var post = await _postService.GetPostDetailsById(postId);
+        var query = new GetPostDetailsQuery(postId);
+        var post = await _mediator.Send(query);
         return Ok(post);
     }
 
@@ -64,7 +68,8 @@ public class PostController : ControllerBase
     [HttpGet("by-user/{userId}")]
     public async Task<IActionResult> GetPostsByUserId(int userId, [FromQuery] int skip, [FromQuery] int take)
     {
-        var posts = await _postService.GetPostsByUserIdAsync(userId, skip, take);
+        var query = new GetPostsByUserIdQuery(userId, skip, take);
+        var posts = await _mediator.Send(query);
         return Ok(posts);
     }
     
@@ -83,7 +88,8 @@ public class PostController : ControllerBase
     [HttpGet("community/{id}/posts")]
     public async Task<IActionResult> PostsByCommunityId([FromRoute] int id, [FromQuery] int skip, [FromQuery] int take)
     {
-        var posts = await _postService.GetPostsByCommunityId(id, skip, take);
+        var query = new GetPostsByCommunityIdQuery(id, skip, take);
+        var posts = await _mediator.Send(query);
         return Ok(posts);
     }
 
@@ -101,15 +107,20 @@ public class PostController : ControllerBase
     {
         if (!ModelState.IsValid) 
             return BadRequest(ModelState);
-        var post = await _postService.CreatePost(createPostDto);
+            
+        var command = new CreatePostCommand(createPostDto);
+        var post = await _mediator.Send(command);
         return Ok(post);
     }
 
     [HttpPost("post/{id}/like")]
     public async Task<IActionResult> LikeAPost([FromRoute] int id)
     {
-        var post = await _postService.LikeApost(id);
-        if (post == null) return NotFound();
+        var command = new LikePostCommand(id);
+        var post = await _mediator.Send(command);
+        
+        if (post == null) 
+            return NotFound();
 
         return Ok(new { post.Id, post.Likes });
     }
@@ -117,7 +128,8 @@ public class PostController : ControllerBase
     [HttpGet("institution-user-feed/{id}")]
     public async Task<IActionResult> InstitutionPostsForUserId([FromRoute] int id, [FromQuery]int skip, [FromQuery] int take)
     {
-        var posts = await _postService.GetInstitutionForUserFeedById(id, skip, take);
+        var query = new GetInstitutionUserFeedQuery(id, skip, take);
+        var posts = await _mediator.Send(query);
         return Ok(posts);
     }
 
@@ -135,8 +147,8 @@ public class PostController : ControllerBase
     [HttpGet("search")]
     public async Task<IActionResult> SearchPostsByTitle([FromQuery] string title, [FromQuery] int skip, [FromQuery] int take)
     {
-        var posts = await _postService.SearchPostByTitleAsync(title, skip, take);
+        var query = new SearchPostsByTitleQuery(title, skip, take);
+        var posts = await _mediator.Send(query);
         return Ok(posts);
     }
-    
 }
