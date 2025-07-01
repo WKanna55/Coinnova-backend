@@ -78,7 +78,7 @@ builder.Services.AddScoped<ICommunityService, CommunityService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IEventService, EventService>();
-builder.Services.AddScoped<IInstitutionService, InstitutionService>();
+// IInstitutionService removido - ahora se usa CQRS con MediatR
 builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
 builder.Services.AddScoped<FileUploadFactory>();
 builder.Services.AddScoped<ICommunityMemberService, CommunityMemberService>();
