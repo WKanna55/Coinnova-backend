@@ -1,5 +1,8 @@
 using Coinnova.Application.Dtos.Event;
 using Coinnova.Application.Interfaces;
+using Coinnova.Application.UseCases.Events.Commands;
+using Coinnova.Application.UseCases.Events.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,26 +11,21 @@ namespace Coinnova.API.Controllers;
 [ApiController]
 [Authorize]
 [Route("api/[controller]")]
-public class EventController : ControllerBase
+public class EventController(IMediator mediator) : ControllerBase
 {
-    private readonly IEventService _eventService;
-
-    public EventController(IEventService eventService)
-    {
-        _eventService = eventService;
-    }
-
     [HttpGet("community/{communityId}/events")]
     public async Task<IActionResult> GetEventsForCommunity(int communityId, [FromQuery]int skip, [FromQuery] int? take = null)
     {
-        var events = await _eventService.GetEventsForCommunityAsync(communityId, skip, take);
+        var query = new GetEventsForCommunityQuery(communityId, skip, take);
+        var events = await mediator.Send(query);
         return Ok(events);
     }
 
     [HttpGet("{eventId}")]
     public async Task<IActionResult> GetEventDetail(int eventId)
     {
-        var eventDetail = await _eventService.GetEventDetailAsync(eventId);
+        var query = new GetEventDetailQuery(eventId);
+        var eventDetail = await mediator.Send(query);
         return Ok(eventDetail);
     }
 
@@ -46,8 +44,8 @@ public class EventController : ControllerBase
         if (!ModelState.IsValid) 
             return BadRequest(ModelState);
         
-        var eventT = await _eventService.CreateEvent(createEventDto);
+        var command = new CreateEventCommand(createEventDto);
+        var eventT = await mediator.Send(command);
         return Ok(eventT);
-
     }
 }
