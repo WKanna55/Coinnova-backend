@@ -1,6 +1,7 @@
 using Coinnova.API.Extensions;
 using Coinnova.API.Middlewares;
 using Coinnova.Application.Common.Files;
+using Coinnova.Application.Configuration;
 using Coinnova.Application.Interfaces;
 using Coinnova.Application.Mappings;
 using Coinnova.Application.Services;
@@ -81,6 +82,11 @@ builder.Services.AddScoped<IInstitutionService, InstitutionService>();
 builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
 builder.Services.AddScoped<FileUploadFactory>();
 builder.Services.AddScoped<ICommunityMemberService, CommunityMemberService>();
+
+// Registrar MediatR con clase marcador
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
+    typeof(ApplicationAssemblyMarker).Assembly
+));
 
 // -------------------------------- app construida --------------------------------
 var app = builder.Build();
